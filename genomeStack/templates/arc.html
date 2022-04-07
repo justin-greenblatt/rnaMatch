@@ -1,0 +1,37 @@
+{% macro arc(arcConfig) %}
+
+<script>
+
+    var {{arcConfig.name}} = [ "{{arcConfig.name}}" , {
+  innerRadius: {{arcConfig.innerRadius}},
+  outerRadius: {{arcConfig.outerRadius}},
+} , [
+{% for a in arcConfig.arcList %}
+
+{chr: "{{a.chrom}}", start: "{{a.start}}", end: "{{a.end}}", color: "{{a.color}}", des: "{{a.description}}"},
+
+{% endfor %}
+]];
+
+</script>
+
+{% endmacro %}
+
+
+{% macro arcTest(arcConfig) %}
+
+<script>
+    var ARC01 = [ "ARC01" , {
+  innerRadius: {{arcConfig.innerRadius}},
+  outerRadius: {{arcConfig.outerRadius}},
+} , [
+{% for a in arcConfig.arcList %}
+
+{chr: "{{a.chrom}}", start: "{{a.start}}", end: "{{a.end}}", color: "{{a.color}}", des: "{{a.description}}"},
+
+{% endfor %}
+]];
+
+</script>
+{% endmacro %}
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+  <html>
+      <head>
+          <meta charset="utf-8">
+          <title>GenomeWalk</title>
+      </head>
+      <body>
+          
+               {% for s in speciesList%}
+              <p>
+                <a href="/{{ s.name }}">{{s.name}}</a>
+              </p>
+               {% endfor %}
+
+          
+      </body>
+  </html>

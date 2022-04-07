@@ -1,0 +1,60 @@
+{% macro circosInit(circosConfig) %}
+<script>
+  NGCircos01 = new NGCircos({% for t in circosConfig.trackList %}{{t.name}},{% endfor %} NGCircosGenome,{       // Initialize NGCircos.js with "NGCircosGenome" and Main configuration
+     target : "NGCircos",
+     svgWidth : 900,
+     svgHeight : 600,
+     svgClassName: "NGCircos",
+     innerRadius: 246,
+     outerRadius: 250,
+     zoom : false,
+     genomeFillColor: ["#999999"],
+     ticks : {
+        display : false,
+        len : 5,
+        color : "#000",
+        textSize : 8,
+        textColor : "#000",
+        scale : 20
+     },
+     genomeLabel : {
+        display : false,
+        textSize : 16,
+        textColor : "red",
+        dx : 3.14,
+        dy : "-0.95em"
+     },
+     ARCMouseEvent: true,
+     ARCMouseClickDisplay: true,
+     ARCMouseClickColor: "red",
+     ARCMouseClickArcOpacity: 1,
+     ARCMouseClickArcStrokeColor: "#F26223",
+     ARCMouseClickArcStrokeWidth: 0,
+     ARCMouseClickTextFromData: "fifth",
+     ARCMouseClickTextOpacity: 1,
+     ARCMouseClickTextColor: "red",
+     ARCMouseClickTextSize: 8,
+     ARCMouseClickTextPostionX: 0,
+     ARCMouseClickTextPostionY: 0,
+     ARCMouseClickTextDrag: true,
+     ARCMouseMoveDisplay: true,
+     ARCMouseMoveColor: "none",
+     ARCMouseMoveArcOpacity: 1,
+     ARCMouseMoveArcStrokeColor: "#F26223",
+     ARCMouseMoveArcStrokeWidth: 3,
+     ARCMouseOutDisplay: true,
+     ARCMouseOutAnimationTime: 500,
+     ARCMouseOutColor: "none",
+     ARCMouseOutArcOpacity: 1,
+     ARCMouseOutArcStrokeColor: "red",
+     ARCMouseOutArcStrokeWidth: 0,
+     ARCMouseOverDisplay: true,
+     ARCMouseOverColor: "none",
+     ARCMouseOverArcOpacity: 1,
+     ARCMouseOverArcStrokeColor: "#F26223",
+     ARCMouseOverArcStrokeWidth: 3,
+  });
+  NGCircos01.draw_genome(NGCircos01.genomeLength);  // NGCircos.js callback
+  NGCircos01.draw_genome(NGCircos01.genomeLength2); // NGCircos2.js callback second 
+</script>
+{% endmacro %}
