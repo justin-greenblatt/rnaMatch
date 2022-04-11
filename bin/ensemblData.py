@@ -7,42 +7,38 @@ from requests import get
 from re import findall
 from Bio import SeqIO
 from settings.regularExpressions import ENSEMBLE_FTP_REGEX_GET_SPECIES
-from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER
-from settings.links import ENSEMBL_DATA_LINK_PREFIX, ENSEMBLE_FTP_LINK
+from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES
+from settings.links import ENSEMBL_DATA_LINK_PREFIX, ENSEMBLE_FTP_LINK, ENSEMBLE_LINK_TYPES
 from myUtils import downloadFromURL
 from sys import exit
 from numpy import histogram, histogram2d, arange
 import json
 
+
+"""
+This class contains all the information taken from genomes in the ensembl FTP site https://www.ensembl.org/info/data/ftp/index.html.
+It contains over 305 genomes. A few of these are variants of the same species. This is the case of Dogs and Pigs. 
+The constructer of the class recieves a species name that is on The ensembl FTP server. This information is previously scraped by 
+getEnsembleGenomes(). We call this species name a preLink cause it is an integral part of the FTP urls and has an all lower cap 
+and underline syntax. The class scrapes for all data links associated with the species in the ensenmbl FTP server and saves that in 
+a dictionary.
+
+OVERALL - The class has the functionality of retrieving data, holding paths to that data, generating reports, histograms and summaries of the data 
+"""
 class ensemblGenome:
+
     def __init__(self, preLink, name, species):
         self.name = name
         self.preLink = preLink.lower()
         self.species = species
         self.id = species.lower().replace(" ","_")
-        dataTypes = (
-                     ("dna", "fasta", "dna"),
-                     ("cdna", "fasta", "cdna"),
-                     ("ncrna", "fasta", "ncrna"),
-                     ("protein", "fasta", "pep"),
-                     ("gtfAnnotation", "gtf", ""),
-                     ("gff3Annotation", "gff3", ""),
-                     ("genebankAnnotatedSeq", "genebank", ""),
-                     ("emblAnnotatedSeq", "embl", ""),
-                     ("tsvAnnotation", "tsv", ""),
-                     ("rdfAnnotation", "rdf", ""),
-                     ("jsonAnnotation", "json", ""),
-                     ("WholeDatabase", "mysql", ""),
-                     ("gvfVariation", "gvf", ""),
-                     ("vcfVariation", "vcf", ""),
-                     ("gffRegulation", "regulation", ""),
-                     ("regulationDataFiles", "data_files", ""),
-                     ("bamBigWig", "bamcov","")
-                     )
 
+        #These are all the datatypes that ensembl FTP offers for its species. This table holds information for inferring the url links to retrieve this data.
+        dataTypes = ENSEMBL_LINK_TYPES
         self.linkDict = {a[0]: join(ENSEMBL_DATA_LINK_PREFIX, a[1], self.preLink, a[2]) for a in dataTypes}
         self.fileDirectories = {}
 
+        #Listing directories in the program - This is inneficient. Should be done separrately
         genomeFiles = listdir(GENOME_FOLDER)
         gtfFiles = listdir(GTF_FOLDER)
         genomeWalkFiles = listdir(GENOME_WALK_FOLDER)
@@ -81,7 +77,7 @@ class ensemblGenome:
 
         genomeAlreadyDownloaded = False
         for f in listdir(GENOME_FOLDER):
-            print("downloaded",join(GENOME_FOLDER, f))
+
             if self.preLink.lower() in f.lower():
                 genomeAlreadyDownloaded = True
                 self.fileDirectories["dna"] = join(GENOME_FOLDER,f)
@@ -91,14 +87,14 @@ class ensemblGenome:
             self.fileDirectories["dna"] = join(GENOME_FOLDER, genomeLink.split('/')[-1])
 
         if not genomeAlreadyDownloaded:
-        #Download Genome
+
             old = getcwd()
             chdir(folder)
             self.fileDirectories["dna"] = join(GENOME_FOLDER,downloadFromURL(genomeLink))
             chdir(old)
-            print("GenomeDownloaded")
+
         else:
-            print("GENOME ALREADY DOWNLOADED")
+
 
     def generateHistograms(self):
 

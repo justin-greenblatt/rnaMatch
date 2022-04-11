@@ -11,4 +11,8 @@ REPEAT_MASK_FOLDER = join(DATA_PATH, "repeatMask")
 HISTOGRAMS_FOLDER = join(DATA_PATH, "histograms")
 REV_BLAST_PATH = join(APLICATION_PATH, "bin", "revBlast.py")
 BLAST_REV_TEMP_DIR = join(DATA_PATH,"temp")
+
 ENSEMBL_HTML_PATH = join(DATA_PATH, "static", "ensemblGenomes.html")
+FILE_DIRECTORIES = (DATA_PATH, "static", "localDataDirectories.json")
+LOG_FOLDER = join(APLICATION_PATH, "log")
+#This is a change
