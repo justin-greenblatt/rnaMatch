@@ -1,0 +1,43 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org
+ERROR:root:Failed to generate histograms for Vicugna pacos | Alpaca
+ERROR:root:Failed to generate histograms for Dasypus novemcinctus | Armadillo
+ERROR:root:Failed to generate histograms for Crocodylus porosus | Australian saltwater crocodile
+ERROR:root:Failed to generate histograms for Otolemur garnettii | Bushbaby
+ERROR:root:Failed to generate histograms for Latimeria chalumnae | Coelacanth
+ERROR:root:Failed to generate histograms for Tursiops truncatus | Dolphin
+ERROR:root:Failed to generate histograms for Loxodonta africana | Elephant
+ERROR:root:Failed to generate histograms for Gorilla gorilla gorilla | Gorilla
+ERROR:root:Failed to generate histograms for Cavia porcellus | Guinea Pig
+ERROR:root:Failed to generate histograms for Erinaceus europaeus | Hedgehog
+ERROR:root:Failed to generate histograms for Procavia capensis | Hyrax
+ERROR:root:Failed to generate histograms for Petromyzon marinus | Lamprey
+ERROR:root:Failed to generate histograms for Echinops telfairi | Lesser hedgehog tenrec
+ERROR:root:Failed to generate histograms for Pteropus vampyrus | Megabat
+ERROR:root:Failed to generate histograms for Myotis lucifugus | Microbat
+ERROR:root:Failed to generate histograms for Ochotona princeps | Pika
+ERROR:root:Failed to generate histograms for Sorex araneus | Shrew
+ERROR:root:Failed to generate histograms for Choloepus hoffmanni | Sloth
+ERROR:root:Failed to generate histograms for Tupaia belangeri | Tree Shrew
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 703-911-444
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:45] "GET /C.intestinalis HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:45] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:56] "[35m[1mGET /8080 HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:56] "GET /8080?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:56] "GET /8080?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:57] "GET /8080?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:14:57] "[36mGET /8080?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:03] "[35m[1mGET /80 HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:03] "GET /80?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:03] "GET /80?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:03] "GET /80?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:04] "[36mGET /80?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:06] "[35m[1mGET /80 HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:06] "[36mGET /80?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:06] "[36mGET /80?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:07] "[36mGET /80?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:08] "[36mGET /80?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:19] "GET /Mouse HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:15:20] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -

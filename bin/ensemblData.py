@@ -7,13 +7,13 @@ from requests import get
 from re import findall
 from Bio import SeqIO
 from settings.regularExpressions import ENSEMBLE_FTP_REGEX_GET_SPECIES
-from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES
-from settings.links import ENSEMBL_DATA_LINK_PREFIX, ENSEMBLE_FTP_LINK, ENSEMBLE_LINK_TYPES
+from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES, LOG_FOLDER, HISTOGRAMS2D_FOLDER
+from settings.links import ENSEMBL_DATA_LINK_PREFIX, ENSEMBL_FTP_LINK, ENSEMBL_LINK_TYPES
 from myUtils import downloadFromURL
 from sys import exit
 from numpy import histogram, histogram2d, arange
 import json
-
+import logging
 
 """
 This class contains all the information taken from genomes in the ensembl FTP site https://www.ensembl.org/info/data/ftp/index.html.
@@ -44,6 +44,7 @@ class ensemblGenome:
         genomeWalkFiles = listdir(GENOME_WALK_FOLDER)
         repeatMaskFiles = listdir(REPEAT_MASK_FOLDER)
         histogramFiles = listdir(HISTOGRAMS_FOLDER)
+        histogram2DFiles = listdir(HISTOGRAMS2D_FOLDER)
 
         for i in genomeFiles:
             if self.id in i.lower().replace(" ","_"):
@@ -65,8 +66,13 @@ class ensemblGenome:
 
         speciesHistograms = list([a for a in histogramFiles if self.id in a.lower().replace(" ","_")])
         for i in speciesHistograms:
-            histName = i.lstrip(self.id + "_").rstrip(".json")
+            histName = i.split('/')[-1].split(".")[0].split("_")[-1]
             self.fileDirectories[histName] = join(HISTOGRAMS_FOLDER, i)
+
+        speciesHistograms2D = list([a for a in histogram2DFiles if self.id in a.lower().replace(" ","_")])
+        for i in speciesHistograms2D:
+            histName = i.split('/')[-1].split(".")[0].split("_")[-1]
+            self.fileDirectories[histName] = join(HISTOGRAMS2D_FOLDER, i)
 
     def getGenome(self, folder = GENOME_FOLDER):
 
@@ -93,7 +99,7 @@ class ensemblGenome:
             self.fileDirectories["dna"] = join(GENOME_FOLDER,downloadFromURL(genomeLink))
             chdir(old)
 
-        else:
+
 
 
     def generateHistograms(self):
@@ -106,19 +112,24 @@ class ensemblGenome:
                         for i in range(skip):
                              dataHandler.readline()
                         x = list([getDataFunc(a) for a in dataHandler])
-                        outDir = open(join(HISTOGRAMS_FOLDER, "{}_{}.json".format(genome.id, histKey)),'w')
-                        print("GENERATING - ", genome.id, histKey)
+                        outPath = join(HISTOGRAMS_FOLDER, "{}_{}.json".format(genome.id, histKey))
+                        outHandler = open(outPath, 'w')
                         hist = histogram(x,bins,range=minMax)
 
                         histDict = {"histogram":hist[0].tolist(), "bins": hist[1].tolist()}
-                        json.dump(histDict, outDir)
+                        json.dump(histDict, outHandler)
                         dataHandler.close()
                         outDir.close()
+                        self.path =  outPath
                    else:
-                        pass
-                        print("loading - ", genome.fileDirectories[histKey])
+                        self.path = genome.fileDirectories[histKey]
+              def getDict(self):
+                  handler = open(self.path)
+                  jsonData = handler.read()
+                  handler.close()
+                  return json.loads(jsonData)
 
-         class Histogram2d:
+         class Histogram2d(Histogram):
               def __init__(self, genome, dataKey, histKey, getDataFuncX, getDataFuncY, XYbins, XYMinMax, skip=1):
 
                    if not histKey in genome.fileDirectories:
@@ -134,43 +145,26 @@ class ensemblGenome:
                             dataHandler.readline()
                         y = list([getDataFuncY(a) for a in dataHandler])
                         dataHandler.close()
-
-                        outDir = open(join(HISTOGRAMS_FOLDER, "{}_{}.json".format(genome.id, histKey)),'w')
+                        outPath = join(HISTOGRAMS_FOLDER, "{}_{}.json".format(genome.id, histKey))
+                        outHandler = open(outPath,'w')
                         hist = histogram(x, bins, (min, max))
                         histDict = {"histogram":hist[0].tolist(), "Xbins": hist[1].tolist(), "Ybins": hist[2].tolist()}
-                        json.dumps(histDict, outDir)
-                        outDir.close()
-
+                        json.dumps(histDict, outHandler)
+                        outHandler.close()
+                        self.path = outPath
+                   else:
+                        self.path =  genome.fileDirectories[histKey]
          self.histograms = {}
          self.histograms["gwSizeHist"] = Histogram(self, "genomeWalk", "gwSizeHist", lambda x: int(x.split(',')[-2]), 1000, (float(0),float(1000)))
          self.histograms["gwCSizeHist"] = Histogram(self,"genomeWalkControl", "gwCSizeHist", lambda x: int(x.split(',')[-2]), 1000, (0,1000))
+         if "mSizeHist" in self.fileDirectories:
+             self.fileDirectories["rmSizeHist"] = self.fileDirectories["mSizeHist"]
+             self.fileDirectories.pop("mSizeHist")
          self.histograms["rmSizeHist"] = Histogram(self, "repeatMask", "rmSizeHist", lambda x: (lambda z: int(z[1]) - int(z[0]))([a for a in x.split() if a][5:7]), 1000, (0, 1000), 3)
-         #self.histograms["gwSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
-         #self.histograms["gwCSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwCSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
 
-    def parseGenome(self):
-
-        self.chromossomes = {}
-        print("Parsing",self.fileDirectories["dna"])
-        genomeHandler = gzip.open(self.fileDirectories["dna"], "rt")
-        genomeIterator = SeqIO.parse(genomeHandler, "fasta")
-        self.baseCounter = Counter()
-        self.genomeBaseData = Counter()
-        self.softMaskSizes = Counter()
-        for c in genomeIterator:
-            print("Parsing", c.id)
-            sequence = str(c.seq)
-            self.chromossomes[c.id] = len(sequence)
-            maskedSize = 0
-
-            for n in sequence:
-                self.genomeBaseData[n] +=1
-                if n.islower():
-                    maskedSize +=1
-                else:
-                    if maskedSize > 0:
-                        self.softMaskSizes[maskedSize] +=1
-                        maskedSize = 0
+         self.histograms2D = {}
+         self.histograms2D["gwSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
+         self.histograms2D["gwCSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwCSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
 
     def getGtf(self):
         getLink = self.linkDict["gtfAnnotation"]
@@ -236,8 +230,7 @@ class ensemblGenome:
         self.fileDirectories.pop("gtfAnnotation")
 
 def getEnsemblGenomes():
-    h = open(ENSEMBL_HTML_PATH)
-    ensembleHtmlData = h.read()
-    h.close()
+
+    ensembleHtmlData = get(ENSEMBL_FTP_LINK, verify=False).text
     return list([ensemblGenome(*a)
             for a in findall(ENSEMBLE_FTP_REGEX_GET_SPECIES, ensembleHtmlData)])

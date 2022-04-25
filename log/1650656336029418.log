@@ -1,0 +1,3 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org

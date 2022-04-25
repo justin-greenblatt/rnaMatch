@@ -1,0 +1,113 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org
+ERROR:root:Failed to generate histograms for Vicugna pacos | Alpaca
+ERROR:root:Failed to generate histograms for Dasypus novemcinctus | Armadillo
+ERROR:root:Failed to generate histograms for Crocodylus porosus | Australian saltwater crocodile
+ERROR:root:Failed to generate histograms for Otolemur garnettii | Bushbaby
+ERROR:root:Failed to generate histograms for Latimeria chalumnae | Coelacanth
+ERROR:root:Failed to generate histograms for Tursiops truncatus | Dolphin
+ERROR:root:Failed to generate histograms for Loxodonta africana | Elephant
+ERROR:root:Failed to generate histograms for Gorilla gorilla gorilla | Gorilla
+ERROR:root:Failed to generate histograms for Cavia porcellus | Guinea Pig
+ERROR:root:Failed to generate histograms for Erinaceus europaeus | Hedgehog
+ERROR:root:Failed to generate histograms for Procavia capensis | Hyrax
+ERROR:root:Failed to generate histograms for Petromyzon marinus | Lamprey
+ERROR:root:Failed to generate histograms for Echinops telfairi | Lesser hedgehog tenrec
+ERROR:root:Failed to generate histograms for Pteropus vampyrus | Megabat
+ERROR:root:Failed to generate histograms for Myotis lucifugus | Microbat
+ERROR:root:Failed to generate histograms for Ochotona princeps | Pika
+ERROR:root:Failed to generate histograms for Sorex araneus | Shrew
+ERROR:root:Failed to generate histograms for Choloepus hoffmanni | Sloth
+ERROR:root:Failed to generate histograms for Tupaia belangeri | Tree Shrew
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 703-911-444
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:46:16] "GET /Horse HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:46:16] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:47:08] "GET /Mouse HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:47:08] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:47:33] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:47:33] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:48:06] "GET /Zebrafish HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:48:06] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:48:30] "GET /Gibbon HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:48:30] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:25] "GET /Macaque HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:25] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:167.248.133.44 - - [24/Apr/2022 12:49:32] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:167.248.133.44 - - [24/Apr/2022 12:49:32] "GET / HTTP/1.1" 200 -
+ERROR:werkzeug:167.248.133.44 - - [24/Apr/2022 12:49:32] code 505, message Invalid HTTP version (2.0)
+INFO:werkzeug:167.248.133.44 - - [24/Apr/2022 12:49:32] "[35m[1mPRI * HTTP/2.0[0m" HTTPStatus.HTTP_VERSION_NOT_SUPPORTED -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:38] "GET /Mallard HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:39] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:56] "GET /Zebra%20finch HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:49:56] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:15] "GET /Platypus HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:16] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:36] "GET /Painted%20turtle HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:36] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:41] "GET /Pig HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:50:41] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:04] "GET /Cow HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:04] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:22] "GET /Zebrafish HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:23] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:27] "GET /C.intestinalis HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:27] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:34] "GET /Cat HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:35] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:47] "GET /Fugu HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:51:47] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:52:02] "GET /Chicken HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:52:03] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:52:22] "GET /Stickleback HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:52:23] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:53:02] "GET /Tropical%20clawed%20frog HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:53:02] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:53:36] "GET /Rat HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:53:37] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:54:08] "GET /Mouse HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 12:54:08] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:02:13] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:02:13] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:03:30] "GET /Mouse HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:03:31] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:04:14] "GET /Stickleback HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:04:14] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:04:33] "GET /Mallard HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:04:33] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:05:10] "GET /Platypus HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:05:10] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:51.79.29.48 - - [24/Apr/2022 13:05:36] "[31m[1mPOST / HTTP/1.1[0m" 405 -
+ERROR:werkzeug:51.79.29.48 - - [24/Apr/2022 13:05:36] code 400, message Bad request syntax ('0x%5B%5D=androxgh0st')
+INFO:werkzeug:51.79.29.48 - - [24/Apr/2022 13:05:36] "[35m[1mNone / HTTP/0.9[0m" HTTPStatus.BAD_REQUEST -
+INFO:werkzeug:51.79.29.48 - - [24/Apr/2022 13:05:36] "[35m[1mGET /.env HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:06:42] "GET /Platypus HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:06:42] "GET /static/plotly.js HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:06:56] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:06:58] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:00] "GET /Cow HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:01] "[35m[1mGET /static/plotly.js HTTP/1.1[0m" 206 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:01] "[35m[1mGET /static/plotly.js HTTP/1.1[0m" 206 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:06] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:20] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:22] "GET /Zebra%20finch HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:22] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:23] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:32] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:35] "GET /Green%20anole HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:35] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:36] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:41] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:46] "GET /Macaque HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:46] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:07:47] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:08:41] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:08:43] "GET /Dog HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:08:43] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:08:44] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:09:25] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:09:35] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:09:35] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:09:36] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:132.70.66.9 - - [24/Apr/2022 13:09:54] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -

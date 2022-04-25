@@ -29,7 +29,7 @@ class repeatMaskData():
 
         self.initiated = False
 
-    def GetRepeatData(self):
+    def getRepeatData(self):
 
         cwd = getcwd()
         chdir(REPEAT_MASK_FOLDER)

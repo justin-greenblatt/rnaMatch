@@ -1,0 +1,57 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org
+ERROR:root:Failed to generate histograms for Homo sapiens | Human
+ERROR:root:Failed to generate histograms for Mus musculus | Mouse
+ERROR:root:Failed to generate histograms for Danio rerio | Zebrafish
+ERROR:root:Failed to generate histograms for Vicugna pacos | Alpaca
+ERROR:root:Failed to generate histograms for Dasypus novemcinctus | Armadillo
+ERROR:root:Failed to generate histograms for Crocodylus porosus | Australian saltwater crocodile
+ERROR:root:Failed to generate histograms for Otolemur garnettii | Bushbaby
+ERROR:root:Failed to generate histograms for Ciona intestinalis | C.intestinalis
+ERROR:root:Failed to generate histograms for Felis catus | Cat
+ERROR:root:Failed to generate histograms for Gallus gallus | Chicken
+ERROR:root:Failed to generate histograms for Pan troglodytes | Chimpanzee
+ERROR:root:Failed to generate histograms for Latimeria chalumnae | Coelacanth
+ERROR:root:Failed to generate histograms for Bos taurus | Cow
+ERROR:root:Failed to generate histograms for Canis lupus familiaris | Dog
+ERROR:root:Failed to generate histograms for Tursiops truncatus | Dolphin
+ERROR:root:Failed to generate histograms for Loxodonta africana | Elephant
+ERROR:root:Failed to generate histograms for Takifugu rubripes | Fugu
+ERROR:root:Failed to generate histograms for Ailuropoda melanoleuca | Giant panda
+ERROR:root:Failed to generate histograms for Nomascus leucogenys | Gibbon
+ERROR:root:Failed to generate histograms for Gorilla gorilla gorilla | Gorilla
+ERROR:root:Failed to generate histograms for Anolis carolinensis | Green anole
+ERROR:root:Failed to generate histograms for Cavia porcellus | Guinea Pig
+ERROR:root:Failed to generate histograms for Erinaceus europaeus | Hedgehog
+ERROR:root:Failed to generate histograms for Equus caballus | Horse
+ERROR:root:Failed to generate histograms for Procavia capensis | Hyrax
+ERROR:root:Failed to generate histograms for Petromyzon marinus | Lamprey
+ERROR:root:Failed to generate histograms for Echinops telfairi | Lesser hedgehog tenrec
+ERROR:root:Failed to generate histograms for Macaca mulatta | Macaque
+ERROR:root:Failed to generate histograms for Anas platyrhynchos | Mallard
+ERROR:root:Failed to generate histograms for Pteropus vampyrus | Megabat
+ERROR:root:Failed to generate histograms for Myotis lucifugus | Microbat
+ERROR:root:Failed to generate histograms for Microcebus murinus | Mouse Lemur
+ERROR:root:Failed to generate histograms for Monodelphis domestica | Opossum
+ERROR:root:Failed to generate histograms for Chrysemys picta bellii | Painted turtle
+ERROR:root:Failed to generate histograms for Sus scrofa | Pig
+ERROR:root:Failed to generate histograms for Sus scrofa | Pig USMARC
+ERROR:root:Failed to generate histograms for Ochotona princeps | Pika
+ERROR:root:Failed to generate histograms for Ornithorhynchus anatinus | Platypus
+ERROR:root:Failed to generate histograms for Microtus ochrogaster | Prairie vole
+ERROR:root:Failed to generate histograms for Oryctolagus cuniculus | Rabbit
+ERROR:root:Failed to generate histograms for Rattus norvegicus | Rat
+ERROR:root:Failed to generate histograms for Sorex araneus | Shrew
+ERROR:root:Failed to generate histograms for Choloepus hoffmanni | Sloth
+ERROR:root:Failed to generate histograms for Lepisosteus oculatus | Spotted gar
+ERROR:root:Failed to generate histograms for Gasterosteus aculeatus | Stickleback
+ERROR:root:Failed to generate histograms for Tupaia belangeri | Tree Shrew
+ERROR:root:Failed to generate histograms for Xenopus tropicalis | Tropical clawed frog
+ERROR:root:Failed to generate histograms for Taeniopygia guttata | Zebra finch
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 104-653-678
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:40:14] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:40:31] "GET /Rat HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:40:31] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:40:31] "[36mGET /static/d3.v4.min.js HTTP/1.1[0m" 304 -

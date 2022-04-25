@@ -1,0 +1,57 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org
+ERROR:root:Failed to generate histograms for Vicugna pacos | Alpaca
+ERROR:root:Failed to generate histograms for Dasypus novemcinctus | Armadillo
+ERROR:root:Failed to generate histograms for Crocodylus porosus | Australian saltwater crocodile
+ERROR:root:Failed to generate histograms for Otolemur garnettii | Bushbaby
+ERROR:root:Failed to generate histograms for Latimeria chalumnae | Coelacanth
+ERROR:root:Failed to generate histograms for Tursiops truncatus | Dolphin
+ERROR:root:Failed to generate histograms for Loxodonta africana | Elephant
+ERROR:root:Failed to generate histograms for Gorilla gorilla gorilla | Gorilla
+ERROR:root:Failed to generate histograms for Cavia porcellus | Guinea Pig
+ERROR:root:Failed to generate histograms for Erinaceus europaeus | Hedgehog
+ERROR:root:Failed to generate histograms for Procavia capensis | Hyrax
+ERROR:root:Failed to generate histograms for Petromyzon marinus | Lamprey
+ERROR:root:Failed to generate histograms for Echinops telfairi | Lesser hedgehog tenrec
+ERROR:root:Failed to generate histograms for Pteropus vampyrus | Megabat
+ERROR:root:Failed to generate histograms for Myotis lucifugus | Microbat
+ERROR:root:Failed to generate histograms for Ochotona princeps | Pika
+ERROR:root:Failed to generate histograms for Sorex araneus | Shrew
+ERROR:root:Failed to generate histograms for Choloepus hoffmanni | Sloth
+ERROR:root:Failed to generate histograms for Tupaia belangeri | Tree Shrew
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 104-653-678
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:11:16] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:11:16] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 10:11:17] "[36mGET /static/d3.v4.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:103.43.11.58 - - [25/Apr/2022 10:11:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:11:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:00] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:94.230.91.68 - - [25/Apr/2022 10:12:01] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:03] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:04] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:162.142.125.212 - - [25/Apr/2022 10:12:14] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:162.142.125.212 - - [25/Apr/2022 10:12:14] "GET / HTTP/1.1" 200 -
+ERROR:werkzeug:162.142.125.212 - - [25/Apr/2022 10:12:14] code 505, message Invalid HTTP version (2.0)
+INFO:werkzeug:162.142.125.212 - - [25/Apr/2022 10:12:14] "[35m[1mPRI * HTTP/2.0[0m" HTTPStatus.HTTP_VERSION_NOT_SUPPORTED -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:46] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:54] "GET /Mallard HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:54] "GET /static/plotly.js HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:12:54] "GET /static/d3.v4.min.js HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:06] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:31] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:32] "GET /Giant%20panda HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:32] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:32] "[36mGET /static/d3.v4.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:33] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:37] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:38] "GET /Gibbon HTTP/1.1" 200 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:38] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:38] "[36mGET /static/d3.v4.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.114.23.237 - - [25/Apr/2022 10:13:40] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.241.219.66 - - [25/Apr/2022 10:22:56] "[35m[1mGET /hudson HTTP/1.1[0m" 500 -
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 10:25:08] "[31m[1mPOST / HTTP/1.1[0m" 405 -
+ERROR:werkzeug:51.79.29.48 - - [25/Apr/2022 10:25:09] code 400, message Bad request syntax ('0x%5B%5D=androxgh0st')
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 10:25:09] "[35m[1mNone / HTTP/0.9[0m" HTTPStatus.BAD_REQUEST -
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 10:25:09] "[35m[1mGET /.env HTTP/1.1[0m" 500 -

