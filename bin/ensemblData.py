@@ -130,24 +130,22 @@ class ensemblGenome:
                   return json.loads(jsonData)
 
          class Histogram2d(Histogram):
-              def __init__(self, genome, dataKey, histKey, getDataFuncX, getDataFuncY, XYbins, XYMinMax, skip=1):
+              def __init__(self, genome, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip=1):
 
                    if not histKey in genome.fileDirectories:
 
                         dataHandler = open(genome.fileDirectories[dataKey])
                         for i in range(skip):
                             dataHandler.readline()
-                        x = list([getDataFuncX(a) for a in dataHandler])
+                        xyPair = list([getDataFunc(a) for a in dataHandler])
+                        x = list([p[0] for p in xyPair])
+                        y = list([p[1] for p in xyPair])
                         dataHandler.close()
-
-                        dataHandler = open(genome.fileDirectories[dataKey])
-                        for i in range(skip):
-                            dataHandler.readline()
-                        y = list([getDataFuncY(a) for a in dataHandler])
-                        dataHandler.close()
-                        outPath = join(HISTOGRAMS_FOLDER, "{}_{}.json".format(genome.id, histKey))
+                        outPath = join(HISTOGRAMS2D_FOLDER, "{}_{}.json".format(genome.id, histKey))
                         outHandler = open(outPath,'w')
-                        hist = histogram(x, bins, (min, max))
+                        print("starting histogram2d for {}".format(genome.name))
+                        hist = histogram2D(x, y, xyBins, xyMinMax)
+                        print("histogram2d for {} generated".format(genome.name))
                         histDict = {"histogram":hist[0].tolist(), "Xbins": hist[1].tolist(), "Ybins": hist[2].tolist()}
                         json.dumps(histDict, outHandler)
                         outHandler.close()
@@ -155,16 +153,16 @@ class ensemblGenome:
                    else:
                         self.path =  genome.fileDirectories[histKey]
          self.histograms = {}
-         self.histograms["gwSizeHist"] = Histogram(self, "genomeWalk", "gwSizeHist", lambda x: int(x.split(',')[-2]), 1000, (float(0),float(1000)))
-         self.histograms["gwCSizeHist"] = Histogram(self,"genomeWalkControl", "gwCSizeHist", lambda x: int(x.split(',')[-2]), 1000, (0,1000))
-         if "mSizeHist" in self.fileDirectories:
-             self.fileDirectories["rmSizeHist"] = self.fileDirectories["mSizeHist"]
-             self.fileDirectories.pop("mSizeHist")
-         self.histograms["rmSizeHist"] = Histogram(self, "repeatMask", "rmSizeHist", lambda x: (lambda z: int(z[1]) - int(z[0]))([a for a in x.split() if a][5:7]), 1000, (0, 1000), 3)
+         #self.histograms["gwSizeHist"] = Histogram(self, "genomeWalk", "gwSizeHist", lambda x: int(x.split(',')[-2]), 1000, (float(0),float(1000)))
+         #self.histograms["gwCSizeHist"] = Histogram(self,"genomeWalkControl", "gwCSizeHist", lambda x: int(x.split(',')[-2]), 1000, (0,1000))
+         #if "mSizeHist" in self.fileDirectories:
+         #    self.fileDirectories["rmSizeHist"] = self.fileDirectories["mSizeHist"]
+         #    self.fileDirectories.pop("mSizeHist")
+         #self.histograms["rmSizeHist"] = Histogram(self, "repeatMask", "rmSizeHist", lambda x: (lambda z: int(z[1]) - int(z[0]))([a for a in x.split() if a][5:7]), 1000, (0, 1000), 3)
 
          self.histograms2D = {}
-         self.histograms2D["gwSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
-         self.histograms2D["gwCSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwCSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)))
+         self.histograms2D["gwSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)),skip = 3)
+         self.histograms2D["gwCSizeHist2d"] = Histogram2d(self, "genomeWalk", "gwCSizeHist2d", lambda x: int(x.split(',')[-2]), lambda x: float(x.split(',')[-1]), (1000,35), ((0, 1000), (0.65, 1)), skip = 3)
 
     def getGtf(self):
         getLink = self.linkDict["gtfAnnotation"]
