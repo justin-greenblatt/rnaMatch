@@ -1,3 +1,7 @@
+"""
+Developed for python3.8
+justingreenblatt@github.com |last updated 09/05/2022
+"""
 from time import time
 import sys
 from os import environ

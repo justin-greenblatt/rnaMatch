@@ -1,20 +1,19 @@
-#python3.8
+
 """
-JUSTIN GREENBLATT 04/2022
-justingreeblatt@github
+Developed for python3.8
+justingreeblatt@github | last updated 09/05/2022
 
 This iterates over the genome and annotation and calls blast (rev_blast.py) on each gtf coordinate.
+
 Its function is mainly to iterate in a paired manner over the genome and coordinates. IT IS ASSUMED THAT THE
 GTF COORDINATES ARE SORTED ACORDING TO THE ORDER OF THE CHROMOSSOMES IN THE GENOME FILE.
 This code also manages output of the revBlast calls and groups them in 2 output files for the whole genome.
 arg[3] or {OUT_FILE} are the results obtained by using blast of the region on its reverse complement.
 arg[4] or {OUT_FILE_CONTROL} has the same content but by using blast of a region on itself.
-
+If you are running this out of the blastWeb repository substitute or remove setting and logging parameters
 It is a command line tool  / python script that should be used in the following manner
 
-python3 genomeWalk.py {genome input} {gtf annotation input} {outFile path} {control outfile path} 
-
-If you are running this out of the blastWeb repository substitute or remove setting and logging parameters
+      python3 genomeWalk.py {genome input} {gtf annotation input} {outFile path} {control outfile path}
 
 dependacies are :
 python libraries:
