@@ -1,16 +1,17 @@
 """
 Developed for python3.8
-justingreenblatt@github.com
+justingreenblatt@github.com | 09/05/2022
 Utils used in more than one object.
 """
-from requests import get
+from requests import get, packages
 from subprocess import Popen, PIPE
 from os import listdir, getcwd
 from shutil import unpack_archive
 from os import listdir
 import logging
 from time import time
-from settings.logs import COMPRESSION_LOG_PATH, COMPRESSION_LEVEL, DOWNLOADS_LOG_PATH, DOWNLOADS_LOG_LEVEL
+from settings.logs import DOWNLOADS_LOG_PATH, DOWNLOADS_LOG_LEVEL
+
 
 def downloadFromURL(url, filename = False, decompress = False):
     """
@@ -20,6 +21,9 @@ def downloadFromURL(url, filename = False, decompress = False):
     logging.basicConfig(filename=DOWNLOADS_LOG_PATH, level = DOWNLOADS_LEVEL)
     logging.info("Downloading from {}".format(url))
 
+    #dissable warnings
+    requests.packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
+    
     if not filename:
         filename = url.split('/')[-1]
     h = open(filename, 'wb+')

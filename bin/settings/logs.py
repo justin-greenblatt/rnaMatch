@@ -7,23 +7,22 @@ setting is set by MASTER_LOG_LEVEL.
 from os.path import join
 from settings.directories import LOG_FOLDER
 from os import mkdir
+import logging
+from random import choice
+from datetime import datetime
 
 #MASTER SWITCH FOR LOGGING LEVEL
-MASTER_LOG_LEVEL = "info"
+MASTER_LOG_LEVEL = logging.INFO
 
-#GENERATING UNIQUE LOG_ID FROM LIST OF BRAZILIAN CITYS
-LOG_ID_TEMPLATE = join(LOG_FOLDER, "logIDs","cityIDs.csv")
-LOG_ID_LIST_PATH = join(LOG_FOLDER, "logIDs","cityIDsNotUsed.csv")
-loadedIDs = open(LOG_ID_LIST_PATH).read().split(',')
-if len(loadedIDs) < 5:
-    loadedIDs = open(LOG_ID_TEMPLATE).read().split(',')
-LOG_ID = choice(loadedIDs)
+#GENERATING UNIQUE LOG_ID FROM TIMESTAMP
+t = datetime.now()
+LOG_ID = "blastWeb_{}D{}M{}Y_{}h{}m{}s".format(t.day, t.month, t.year, t.hour, t.minute, t.second)
 mkdir(join(LOG_FOLDER, LOG_ID))
-L = lambda x: join(LOG_FOLDER,"{}_{}.txt".format(LOG_ID, x))
+L = lambda x: join(LOG_FOLDER, LOG_ID, "{}_{}.txt".format(LOG_ID, x))
 
 
 #DEFINING LOGS AND LEVELS
-MAIN_LOG = L("main")
+MAIN_LOG_PATH = L("main")
 MAIN_LOG_LEVEL = MASTER_LOG_LEVEL
 
 GENOME_WALK_LOG_PATH = L("gw")
@@ -43,3 +42,6 @@ REPEAT_MASK_LOG_LEVEL = MASTER_LOG_LEVEL
 
 REV_BLAST_LOG_PATH = L("repeatMask")
 REV_BLAST_LOG_LEVEL = MASTER_LOG_LEVEL
+
+DOWNLOADS_LOG_PATH = L("downloads")
+DOWNLOADS_LOG_LEVEL = MASTER_LOG_LEVEL
