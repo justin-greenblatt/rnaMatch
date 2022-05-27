@@ -5,7 +5,7 @@ Histogram object for generating numpy histograms from data associated to an ense
 """
 import logging
 from os.path import join
-from numpy import histogram, histogram2d
+from numpy import histogram, histogram2d, array
 from time import time
 from settings.logs import HISTOGRAM_LOG_PATH, HISTOGRAM_LOG_LEVEL, HISTOGRAM2D_LOG_PATH, HISTOGRAM2D_LOG_LEVEL
 from settings.directories import HISTOGRAMS_FOLDER, HISTOGRAMS2D_FOLDER
@@ -109,10 +109,11 @@ class Histogram2d(Histogram):
             x = list([p[0] for p in xyPair])
             y = list([p[1] for p in xyPair])
             hist = histogram2d(x, y, xyBins, xyMinMax)
+            maxBinCount = hist[0].max()
             #export data
             outPath = join(HISTOGRAMS2D_FOLDER, "{}_{}.json".format(genome.id, histKey))
             outHandler = open(outPath,'w')
-            histDict = {"histogram":hist[0].tolist(), "Xbins": hist[1].tolist(), "Ybins": hist[2].tolist()}
+            histDict = {"histogram":hist[0].tolist(), "xbins": hist[1].tolist(), "ybins": hist[2].tolist(), "maxBinCount": maxBinCount}
             json.dump(histDict, outHandler)
             outHandler.close()
             dataHandler.close()

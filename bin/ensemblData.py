@@ -19,7 +19,7 @@ from requests import get
 from re import findall
 from Bio import SeqIO
 from settings.regularExpressions import ENSEMBLE_FTP_REGEX_GET_SPECIES
-from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES, LOG_FOLDER, HISTOGRAMS2D_FOLDER
+from settings.directories import GENOME_FOLDER, GENOME_WALK_FOLDER, GENOME_WALK_PATH, ENSEMBL_HTML_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES, LOG_FOLDER, HISTOGRAMS2D_FOLDER, IMAGE_FOLDER
 from settings.links import ENSEMBL_DATA_LINK_PREFIX, ENSEMBL_FTP_LINK, ENSEMBL_LINK_TYPES
 from settings.logs import ENSEMBL_GENOME_LOG_PATH, ENSEMBL_GENOME_LOG_LEVEL
 from myUtils import downloadFromURL
@@ -28,7 +28,7 @@ from numpy import histogram, histogram2d, arange
 import json
 import logging
 from Histogram import Histogram, Histogram2d
-
+from random import choice
 logging.basicConfig(filename=ENSEMBL_GENOME_LOG_PATH, level = ENSEMBL_GENOME_LOG_LEVEL)
 
 class ensemblGenome:
@@ -54,6 +54,7 @@ class ensemblGenome:
         repeatMaskFiles = listdir(REPEAT_MASK_FOLDER)
         histogramFiles = listdir(HISTOGRAMS_FOLDER)
         histogram2DFiles = listdir(HISTOGRAMS2D_FOLDER)
+        imageFiles = listdir(IMAGE_FOLDER)
 
         for i in genomeFiles:
             if self.id in i.lower().replace(" ","_"):
@@ -73,6 +74,10 @@ class ensemblGenome:
             if self.id in i.lower().replace(" ","_"):
                 self.fileDirectories["repeatMask"] = join(REPEAT_MASK_FOLDER, i)
 
+        for i in imageFiles:
+            if self.id in i.lower().replace(" ","_"):
+                self.fileDirectories["image"] = join(IMAGE_FOLDER, i)
+
         speciesHistograms = list([a for a in histogramFiles if self.id in a.lower().replace(" ","_")])
         for i in speciesHistograms:
             histName = i.split('/')[-1].split(".")[0].split("_")[-1]
@@ -82,7 +87,6 @@ class ensemblGenome:
         for i in speciesHistograms2D:
             histName = i.split('/')[-1].split(".")[0].split("_")[-1]
             self.fileDirectories[histName] = join(HISTOGRAMS2D_FOLDER, i)
-
         logging.debug("local data paths related to genome object: dictionaryOfPaths [{}]".format(str(self.fileDirectories)))
 
     def getGenome(self):
@@ -128,14 +132,14 @@ class ensemblGenome:
             self.histograms2d["gwSizeHist2d"] = Histogram2d(self, "genomeWalk",
                           "gwSizeHist2d",
                           lambda x: list([float(a) for a in x.split(',')[-2:]]),
-                          (1000,35),
-                          ((0, 1000), (0.65, 1)))
+                          (500,35),
+                          ((0, 500), (0.65, 1)))
 
-            self.histograms2d["gwCSizeHist2d"] = Histogram2d(self, "genomeWalk",
+            self.histograms2d["gwCSizeHist2d"] = Histogram2d(self, "genomeWalkControl",
                           "gwCSizeHist2d",
                           lambda x: list([float(a) for a in x.split(',')[-2:]]),
-                          (1000,35),
-                          ((0, 1000), (0.65, 1)))
+                          (500,35),
+                          ((0, 500), (0.65, 1)))
         else:
             logging.warning("No GenomeWalkFile for {}|{}".format(self.name, self.species))
 
@@ -224,6 +228,36 @@ class ensemblGenome:
                 if self.id in i.lower().replace(" ","_") and "control" in i:
                     self.fileDirectories["genomeWalkControl"] = join(GENOME_WALK_FOLDER, i)
             logging.debug("Added paths to fileDirectories: genomeWalkPath genomeWalkControlPath [{},{}]".format(self.fileDirectories["genomeWalk"], self.fileDirectories["genomeWalkControl"]))
+
+    def getImage(self):
+        infered_link = "https://animaldiversity.org/accounts/{}{}/".format(self.species[0].upper(),                                                                                      self.species[1:].lower().replace(" ","_"))
+        no_error = True
+        if "image" not in self.fileDirectories:
+            try:
+                html_text = get(infered_link).text
+            except:
+                logging.error("Failed to retrieve data of {}|{} from {}".format(self.name,self.species, infered_link))
+                no_error = False
+            if no_error:
+                 try:
+                     rx = r"meta content=\"(?<link>.{10,200})\""
+                     imageLinks = list([a[0] for a in findall(rx, html_text)])
+                     imageLink = choice(imageLinks)[0]
+                 except:
+                     logging.error("failed to retrieve image link for {}|{} from {}".format(self.name,self.species, infered_link))
+                     no_error = False
+            if no_error:
+                 try:
+                     cwd = getcwd()
+                     chdir(IMAGE_FOLDER)
+                     self.fileDirectories["image"] = join(IMAGE_FOLDER, downloadFromURL(imageLink,
+                                      "{}.{}".format(self.id, imageLink.split('.')[-1])))
+                     chdir(cwd)
+                 except:
+                     logging.error("failed to download image link for {}|{} from {}".format(self.name,self.species, infered_link))
+            if not no_error:
+                
+                self.fileDirectories["image"] = None
 
 def getEnsemblGenomes():
     """This function generates ensemblGenome objects  for all species on the ensembl ftp page ensembl.org/info/data/ftp/index.html
