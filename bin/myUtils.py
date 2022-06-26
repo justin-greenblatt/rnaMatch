@@ -48,3 +48,6 @@ def downloadFromURL(url, filename = False, decompress = False):
         " ".join(command), str(time()), dP.pid, dP.returncode , dP.communicate()[1] , dP.communicate[0]))
         filename = re.match(r'replaced with (?<file>[\w|\.|\_]*)' , dP.communicate()[0]).group("file")
     return filename
+
+def getLinks(link):
+    return re.findall(r'href=\"(.*?)\"', requests.get(link, verify = False).text)

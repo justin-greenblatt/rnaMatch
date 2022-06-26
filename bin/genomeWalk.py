@@ -77,7 +77,7 @@ CHANGE LATER: I would probably make a folder with functions for different annota
 def getNextGene(iterator):
     line = next(iterator)
     while line.startswith('#') or line.split('\t')[2] != "gene":
-        line = next(gtfIterator, "")
+        line = next(iterator)
         if line == "":
             sys.exit(0)
             break
