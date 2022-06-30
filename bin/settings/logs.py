@@ -10,6 +10,7 @@ from os import mkdir
 import logging
 from random import choice
 from datetime import datetime
+from time import strftime
 
 #MASTER SWITCH FOR LOGGING LEVEL
 MASTER_LOG_LEVEL = logging.INFO
@@ -19,7 +20,7 @@ t = datetime.now()
 LOG_ID = "blastWeb_{}D{}M{}Y_{}h{}m{}s".format(t.day, t.month, t.year, t.hour, t.minute, t.second)
 mkdir(join(LOG_FOLDER, LOG_ID))
 L = lambda x: join(LOG_FOLDER, LOG_ID, "{}_{}.txt".format(LOG_ID, x))
-
+TIME = lambda: strftime("%c")
 
 #DEFINING LOGS AND LEVELS
 MAIN_LOG_PATH = L("main")
@@ -42,6 +43,9 @@ ENSEMBL_GENOME_LOG_LEVEL = MASTER_LOG_LEVEL
 
 NCBI_GENOME_LOG_PATH = L("ncbi")
 NCBI_GENOME_LOG_LEVEL = MASTER_LOG_LEVEL
+
+NCBI_SCRAPE_LOG_PATH = L("ncbi")
+NCBI_SCRAPE_LOG_LEVEL = MASTER_LOG_LEVEL
 
 REPEAT_MASK_LOG_PATH = L("repeatMask")
 REPEAT_MASK_LOG_LEVEL = MASTER_LOG_LEVEL

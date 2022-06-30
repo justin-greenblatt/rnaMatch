@@ -35,6 +35,7 @@ GENOME_WALK_PATH = join(DATA_PATH, "bin", "genomeWalk.py")
 IMAGE_FOLDER = join(APLICATION_PATH, "bin", "static") 
 REV_BLAST_PATH = join(APLICATION_PATH, "bin", "revBlast.py")
 BLAST_REV_TEMP_DIR = join(DATA_PATH,"temp")
+NCBI_RESOURCE_LINKS_PATH = join(APLICATION_PATH, "bin", "ncbiLinks.py")
 
 ENSEMBL_HTML_PATH = join(DATA_PATH, "static", "ensemblGenomes.html")
 FILE_DIRECTORIES = (DATA_PATH, "static", "localDataDirectories.json")

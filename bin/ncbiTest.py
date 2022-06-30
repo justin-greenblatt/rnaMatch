@@ -2,45 +2,36 @@
 Developed for python3.8
 justingreenblatt@github.com |last updated 09/05/2022
 """
+
 from time import time
-import sys
 from os import environ
-from os.path import join
+from os.path import join, isfile
 from flask import Flask, render_template, url_for
-from settings.logs import MAIN_LOG_PATH, MAIN_LOG_LEVEL
 from requests import packages
 
-sys.path.insert(1, join(environ.get("HOME"), "blastWeb/bin"))
-
-import ensemblData
 import myUtils
-import repeatMaskData
 import logging
+import sys
 
-logging.basicConfig(filename = MAIN_LOG_PATH, level = MAIN_LOG_LEVEL)
-packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
-logging.info("Scraping data links from ensemble rest API and generating ensemble genome Objects")
-genomes = ensemblData.getEnsemblGenomes()
-logging.info("Scraping data links from repeatMask.org of program output")
-rm = repeatMaskData.getLinks()
-logging.info("Gettint intersection of species with data in ensembl and repeatMask.org")
-print(len(rm), "REPEAT MASK")
-print(len(genomes), "ENSEMBL GENOMES")
-webGenomes = list([g for g in genomes if g.species.lower() in [n.species.lower() for n in rm] and not "-" in g.name])
-print(len(webGenomes), "WEBgENOMES")
-for g in webGenomes:
-        g.generateHistograms()
+sys.path.insert(1, join(environ.get("HOME"), "blastWeb/bin"))
+from ncbiData import ncbiData
+from settings.logs import MAIN_LOG_PATH, MAIN_LOG_LEVEL
+from settings.directories import NCBI_RESOURCE_LINKS_PATH
+from ncbiScrape import getSpeciesLinks
 
-workingGenomes = list([a for a in webGenomes if a.histograms2d])
-print(len(workingGenomes), "WORKINGGENOMES")
+if isfile(NCBI_RESOURCE_LINKS_PATH):
+    h = open(NCBI_RESOURCE_LINKS_PATH)
+    ncbiSpeciesLinks = json.load(h)
+else:
+    ncbiSpeciesLinks = getSpeciesLinks()
+
+webGenomes = dict({a : list([ncbiData(b, c) for b,c in ncbiSpeciesLinks[a].items()]) for a in ncbiSpeciesLinks}) 
+"""
 app = Flask(__name__)
-
-
 
 @app.route("/")
 def template_test():
     return render_template("home.html", speciesList = workingGenomes)
-
 
 @app.route("/<species>")
 def speciesData(species):
@@ -62,3 +53,4 @@ def speciesData(species):
 
 if __name__ == "__main__":
     app.run(debug=True,host="0.0.0.0", port=80)
+"""

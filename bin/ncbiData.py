@@ -29,21 +29,25 @@ from Histogram import Histogram, Histogram2d
 
 #My constants/parameters imports
 from settings.directories import MRNA_FOLDER, GENOME_FOLDER, GENOME_WALK_FOLDER, RNA_WALK_FOLDER, RNA_WALK_CONTROL_FOLDER, GENOME_WALK_CONTROL_FOLDER, GENOME_WALK_PATH, RNA_WALK_PATH, GTF_FOLDER, REPEAT_MASK_FOLDER, HISTOGRAMS_FOLDER, FILE_DIRECTORIES, LOG_FOLDER, HISTOGRAMS2D_FOLDER, IMAGE_FOLDER
-from settings.logs import NCBI_GENOME_LOG_PATH, NCBI_GENOME_LOG_LEVEL
+from settings.logs import NCBI_GENOME_LOG_PATH, NCBI_GENOME_LOG_LEVEL, TIME
 
 
-class NcbiData:
+class ncbiData:
 
     def __init__(self, assembly, linkDict):
 
         """
         Look for any resources from this assembly present in storage.
         """
-        self.species, self.assembly = assembly.split('/')
+
+        self.species, self.assembly = assembly.split('/')[:2]
         self.links = linkDict
         self.fileDirectories = {}
         self.id = assembly.replace("/","_")
-        
+        logging.basicConfig(filename=join(NCBI_GENOME_LOG_PATH,self.id + ".log"), level = NCBI_GENOME_LOG_LEVEL)
+        logging.info("Creating ncbiData object for {} time {}".format(assembly, TIME()))
+
+
         #find All resources. The lambda funcion is a dummy function to trick the wrapper into doing its work
         self.updateResources(lambda : 1 -1)
         logging.debug("Creating NCBI data object {}".format(self.id))
@@ -54,9 +58,9 @@ class NcbiData:
             logging.basicConfig(filename=join(NCBI_GENOME_LOG_PATH,self.id + ".log"), level = logLevel)
             func(*args, **kwargs)
         
-        return  logWrapper
+        return logWrapper
    
-    def updateResources(func):
+    def updateResources(self, func):
         """
         Decorator for updating resources of this ncbiDataset before and after running an important function
         """

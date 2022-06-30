@@ -20,3 +20,13 @@ ENSEMBL_LINK_TYPES = (
                      ("regulationDataFiles", "data_files", ""),
                      ("bamBigWig", "bamcov","")
                      )
+
+#NCBI DATA LINKS
+
+NCBI_LINK_START = "https://ftp.ncbi.nih.gov/genomes/refseq"
+NCBI_LINK_END = "annotation_releases/current"
+NCBI_EUKARYOTS = ["vertebrate_mammalian",
+                  "vertebrate_other",
+                  "invertebrate",
+                  "plant",                                                                                                                        "protozoa",
+                  "fungi"]

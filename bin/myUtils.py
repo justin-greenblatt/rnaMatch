@@ -51,3 +51,11 @@ def downloadFromURL(url, filename = False, decompress = False):
 
 def getLinks(link):
     return re.findall(r'href=\"(.*?)\"', requests.get(link, verify = False).text)
+
+def compareDict(old, new):
+    out = {}
+    out["added"] = {k : new[k] for k in list(set(new.keys()) - set(old.keys()))} 
+    out["removed"] = {k: old[k] for k in list(set(old.keys()) - set(new.keys()))}
+    out["altered"] = {k : {"old" : old[k], "new" : new[k]} for k in list(set(old.keys()) & set(new.keys())) if old[k] != new[k]}
+    out["same"] = {k : old[k]} for k in list(set(old.keys()) & set(new.keys())) if old[k] == new[k]}
+    return out
