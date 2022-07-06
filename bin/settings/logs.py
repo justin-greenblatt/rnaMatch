@@ -13,7 +13,7 @@ from datetime import datetime
 from time import strftime
 
 #MASTER SWITCH FOR LOGGING LEVEL
-MASTER_LOG_LEVEL = logging.INFO
+MASTER_LOG_LEVEL = logging.DEBUG
 
 #GENERATING UNIQUE LOG_ID FROM TIMESTAMP
 t = datetime.now()

@@ -1,7 +1,7 @@
 
 """
-Developed for python3.8
-justingreeblatt@github | last updated 09/05/2022
+Developed for python3.9
+justingreeblatt@github | last updated 06/06/2022
 
 This iterates over the genome and annotation and calls blast (rev_blast.py) on each gtf coordinate.
 
@@ -28,13 +28,18 @@ import os
 import sys
 from Bio import SeqIO
 import re
+
 from settings.runParameters import MINUS_GENE_REGION, PLUS_GENE_REGION
-from settings.directories import REV_BLAST_PATH
-from settings.logs import GENOME_WALK_LOG_PATH, GENOME_WALK_LOG_LEVEL
+from settings.directories import REV_BLAST_PATH, LOGGING_CONF
+
 import gzip
 import logging
+import logging.conf
 
-logging.basicConfig(filename=GENOME_WALK_LOG_PATH, level=GENOME_WALK_LOG_LEVEL)
+#Setting up Logging
+logging.config.fileConfig(LOGGING_CONF)
+logger = logging.getLogger("genomeWalk")
+
 
 #Genome
 IN_FILE_GENOME = sys.argv[1]
@@ -46,7 +51,7 @@ IN_FILE_GTF = sys.argv[2]
 OUT_FILE = sys.argv[3]
 CONTROL_OUT_FILE = sys.argv[4]
 
-logging.debug("STARTING genomeWalk: genomeIn gtfIn hitsOut controlHitsOut time\t{}\t{}\t{}\t{}\t{}".format(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],time()))
+logger.debug("STARTING genomeWalk: genomeIn gtfIn hitsOut controlHitsOut time\t{}\t{}\t{}\t{}\t{}".format(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],time()))
 
 #create output files
 new = open(OUT_FILE,'x')
@@ -128,7 +133,7 @@ while flag:
 
         gene = getNextGene(gtfIterator)
     chromosome = next(genomeIterator, None)
-logging.debug("ENDING genomeWalk: genomeIn gtfIn hitsOut controlHitsOut time\t{}\t{}\t{}\t{}\t{}".format(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],time()))
+logger.debug("ENDING genomeWalk: genomeIn gtfIn hitsOut controlHitsOut time\t{}\t{}\t{}\t{}\t{}".format(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],time()))
 gtfHandler.close()
 genomeHandler.close()
 
