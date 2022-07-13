@@ -40,7 +40,9 @@ name = tempPrefix + sys.argv[1].split("/")[-1].split(".")[0]
 if not os.path.exists(IN_FILE):
     sys.exit(0)
 blastResultsFile = name + '.' + pConfig["blastn"]["OUT_FILE_SUFFIX"]
+blastDbPath = os.path.join(dConfig["revBlast"]["REV_BLAST_TEMP_FOLDER"], name)
 blastResultsPath = os.path.join(dConfig["revBlast"]["REV_BLAST_TEMP_FOLDER"], blastResultsFile)
+
 #CREATING BLAST DATABASE
 makeDbCommand = list([a for a in 
 
@@ -48,7 +50,7 @@ makeDbCommand = list([a for a in
         pConfig["makeblastdb"]["USER_FLAGS"],
         pConfig["makeblastdb"]["RUN_PATH"],
         "-in" , IN_FILE, 
-        "-out", name,
+        "-out", blastDbPath,
         "-dbtype", pConfig["makeblastdb"]["DB_TYPE"],
         pConfig["makeblastdb"]["EXTRA_FLAGS"],
         pConfig["makeblastdb"]["EXTRA_FLAG_VALUE_PAIRS"]]
@@ -66,7 +68,7 @@ blastnCommand = list([a for a in
         pConfig["blastn"]["RUN_PATH"],
         "-query",IN_FILE, 
         "-strand",STRAND,
-        "-db", name,
+        "-db", blastDbPath,
         "-out", blastResultsPath,
         "-outfmt", pConfig["blastn"]["OUT_FORMAT"],
         pConfig["blastn"]["EXTRA_FLAGS"],
@@ -104,7 +106,10 @@ summaryOut = open(OUT_FILE, 'a')
 summaryOut.write(summary)
 summaryOut.close()
 
-for f in os.listdir(os.getcwd()):
-    if f.startswith(tempPrefix):
-        os.remove(f)
-        logger.debug(f"removing file: {f}")
+#Cleaning out temp files
+tempFileSuffixes = [".nhr",".nsq",".nin",".xml"]
+tempFiles = [blastDbPath + s for s in tempFileSuffixes]
+for f in tempFiles:
+    os.remove(f)
+    logger.debug(f'Removing{f}')
+

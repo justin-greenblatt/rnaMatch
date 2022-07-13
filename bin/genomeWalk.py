@@ -62,8 +62,8 @@ logger.debug(f"STARTING genomeWalk:{sys.argv[0]} {sys.argv[1]} {sys.argv[2]} {sy
 #create output files
 new = open(OUT_FILE,'x')
 newControl = open(CONTROL_OUT_FILE, 'x')
-new.write("geneId,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
-newControl.write("geneId,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
+new.write("geneId,chromossome, geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
+newControl.write("geneId,chromossome,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
 new.close()
 newControl.close()
 
@@ -116,6 +116,7 @@ while flag:
         
         #Getting data of the gene
         geneID = re.search(r'gene_id \"(.+?)\"', gene).group(1)
+        geneChrom = chromossome.id
         geneStart = int(gene.split('\t')[3])
         geneEnd = int(gene.split('\t')[4])
         geneStrand = gene.split('\t')[6]
@@ -124,7 +125,7 @@ while flag:
         #Writing gene data to temporary file 
         tempFilename = "temp_fasta_" + geneID + '.fa'
         tempGeneFasta = open(tempFilename, 'w')
-        fastaHeader = ">" + ",".join([geneID, str(geneStart), str(geneEnd), str(geneStrand)]) + "\n"
+        fastaHeader = ">" + ",".join([geneID, geneChrom, str(geneStart), str(geneEnd), str(geneStrand)]) + "\n"
         tempGeneFasta.write(fastaHeader)
         tempGeneFasta.write(geneSeq)
         tempGeneFasta.close()
