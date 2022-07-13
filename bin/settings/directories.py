@@ -39,13 +39,17 @@ NCBI_RESOURCE_LINKS_PATH = join(APLICATION_PATH, "bin", "ncbiLinks.py")
 
 TEST_FOLDER = join(APLICATION_PATH, "tests")
 NCBI_DUMMY_DATA = join(TEST_FOLDER, "dummyNcbiData.json")
+TEST_REV_BLAST_IN_FILE = join(TEST_FOLDER, "testGeneData.fa")
+TEST_REV_BLAST_OUT_FILE = join(TEST_FOLDER, "testOutMinus.csv")
+TEST_REV_BLAST_CONTROL_OUT_FILE = join(TEST_FOLDER, "testOutPlus.csv")
 
 ENSEMBL_HTML_PATH = join(DATA_PATH, "static", "ensemblGenomes.html")
 FILE_DIRECTORIES = (DATA_PATH, "static", "localDataDirectories.json")
 LOG_FOLDER = join(APLICATION_PATH, "logs")
 ANAGE_DATA_FILE = join(DATA_PATH, "anAge", "anage.txt")
-LOGGING_CONF = join(APLICATION_PATH, "bin", "settings", "logging.ini")
-
+LOGGING_CONFIG = join(APLICATION_PATH, "bin", "settings", "logging.ini")
+PROCESSES_CONFIG = join(APLICATION_PATH, "bin", "settings", "processes.ini")
+DIRECTORIES_CONFIG = join(APLICATION_PATH, "bin", "settings", "directories.ini")
 RESOURCE_FOLDERS = {
             "dna" : GENOME_FOLDER,
             "gtf" : GTF_FOLDER,

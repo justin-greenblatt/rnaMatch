@@ -3,12 +3,21 @@ import os
 from time import time
 import sys
 import logging
+import logging.config
 import Bio.Blast.NCBIXML as BlastReader
-from settings.directories import BLAST_REV_TEMP_DIR
-from settings.logs import REPEAT_MASK_LOG_PATH,  REPEAT_MASK_LOG_LEVEL
+from settings.directories import LOGGING_CONFIG, PROCESSES_CONFIG, DIRECTORIES_CONFIG
+from configparser import ConfigParser, ExtendedInterpolation
 
-logging.basicConfig(filename=REV_BLAST_LOG_PATH, level = REV_BLAST_LOG_LEVEL)
-logging.debug("Running revBlast: command time [{},{}]".format(" ".join(sys.argv), time()))
+pConfig = ConfigParser()
+pConfig.read(PROCESSES_CONFIG)
+
+dConfig = ConfigParser(interpolation = ExtendedInterpolation())
+dConfig.read(DIRECTORIES_CONFIG)
+
+logging.config.fileConfig(LOGGING_CONFIG)
+logger = logging.getLogger("revBlast")
+logger.debug(f'Running revBlast {" ".join(sys.argv)}')
+
 #Fasta File
 IN_FILE = sys.argv[1]
 
@@ -24,26 +33,48 @@ if STRAND == "minus":
 elif STRAND == "plus":
     tempPrefix = "blast_temp_control_"
 else:
-    print("Entry error in BlastRev. Exiting")
+    logger.error("Entry error in BlastRev. Exiting")
     sys.exit(0)
 
 name = tempPrefix + sys.argv[1].split("/")[-1].split(".")[0]
 if not os.path.exists(IN_FILE):
     sys.exit(0)
-
+blastResultsFile = name + '.' + pConfig["blastn"]["OUT_FILE_SUFFIX"]
+blastResultsPath = os.path.join(dConfig["revBlast"]["REV_BLAST_TEMP_FOLDER"], blastResultsFile)
 #CREATING BLAST DATABASE
-print(IN_FILE)
-command = ["makeblastdb", "-in" , IN_FILE, "-out", name, "-dbtype", "nucl"]
-p = Popen(command, stdout = PIPE)
-logging.debug("Creating Blast Database: command time [{}, {}]".format(" ".join(command), time()))
+makeDbCommand = list([a for a in 
+
+        [pConfig["makeblastdb"]["USER"],
+        pConfig["makeblastdb"]["USER_FLAGS"],
+        pConfig["makeblastdb"]["RUN_PATH"],
+        "-in" , IN_FILE, 
+        "-out", name,
+        "-dbtype", pConfig["makeblastdb"]["DB_TYPE"],
+        pConfig["makeblastdb"]["EXTRA_FLAGS"],
+        pConfig["makeblastdb"]["EXTRA_FLAG_VALUE_PAIRS"]]
+        if a])
+
+p = Popen(makeDbCommand, stdout = PIPE)
+logger.debug(f'Creating Blast {" ".join(makeDbCommand)}')
 p.wait()
 
 #RUNING BLAST ALIGNER
+blastnCommand = list([a for a in 
 
-runBlast = ["blastn", "-query", IN_FILE, "-strand", STRAND, "-db", name,
-                "-out", name + ".xml", "-outfmt", "5"]
-logging.debug("running blast: command time [{}, {}]".format(" ".join(runBlast), time()))
-b = Popen(runBlast, stdout = PIPE)
+        [pConfig["blastn"]["USER"],
+        pConfig["blastn"]["USER_FLAGS"],
+        pConfig["blastn"]["RUN_PATH"],
+        "-query",IN_FILE, 
+        "-strand",STRAND,
+        "-db", name,
+        "-out", blastResultsPath,
+        "-outfmt", pConfig["blastn"]["OUT_FORMAT"],
+        pConfig["blastn"]["EXTRA_FLAGS"],
+        pConfig["blastn"]["EXTRA_FLAG_VALUE_PAIRS"]]
+        if a])
+
+logger.debug(f'Running blastn {" ".join(blastnCommand)}')
+b = Popen(blastnCommand, stdout = PIPE)
 b.wait()
 
 #WRITING OUTPUT
@@ -51,16 +82,16 @@ fastaHandler = open(IN_FILE)
 fastaHeader = fastaHandler.readline()
 fastaHandler.close()
 summary = ""
-blast = list(BlastReader.parse(open(name + ".xml")))
-blast_records = []
+blast = list(BlastReader.parse(open(blastResultsPath)))
+blastRecords = []
 try:
-    blast_records = blast[0].alignments[0].hsps
+    blastRecords = blast[0].alignments[0].hsps
 except:
-    logging.warning("Not able to read blast results from {}".format(name + ".xml"))
+    logger.error(f'Not able to read blast results from {blastResultsPath}')
     sys.exit(0)
 
-logging.debug("Writing out blast results: command nHits time [{}, {}, {}]".format(" ".join(runBlast), len(blastRecords) , time()))
-for a in blast_records:
+logger.debug(f'Writing out blast results: nHits: {len(blastRecords)}')
+for a in blastRecords:
     summary += "{},{},{},{},{},{},{}\n".format(fastaHeader.rstrip('\n').lstrip('>'),
                                            a.query_start,
                                            a.query_end,
@@ -76,4 +107,4 @@ summaryOut.close()
 for f in os.listdir(os.getcwd()):
     if f.startswith(tempPrefix):
         os.remove(f)
-        logging.debug("removing file: relativeFilePath [{}]".format(f))
+        logger.debug(f"removing file: {f}")

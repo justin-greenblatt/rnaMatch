@@ -42,5 +42,4 @@ class TestNcbiData:
 if __name__ == "__main__":
     t = TestNcbiData()
     g = t.platypus
-    g.getResource("dna")
-    g.getResource("gtf")
+    g.runGenomeWalk()
