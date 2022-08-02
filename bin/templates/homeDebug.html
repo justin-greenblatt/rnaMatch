@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+  <html>
+      <head>
+          <meta charset="utf-8">
+          <title>GenomeWalk</title>
+          <script src="{{url_for('static', filename='plotly.js')}}"></script>
+      </head>
+      <body>
+      <div id="myDiv" style="width:1000px;height:500px;"></div>
+      <script>
+
+          {% for c in temperatureData.clusters%}
+
+              var trace{{c.id}} = {
+              x: {{c.xArray|safe}},
+	      y: {{c.yArray|safe}},
+              mode: 'markers+text',
+              type: 'scatter',
+	      name: '{{c.name}}',
+	      text: {{c.textArray|safe}},
+              textposition: 'top center',
+              opacity: {{c.opacity}},
+	      textfont: {
+              family:  'Raleway, sans-serif'
+                        },
+              marker: {
+		          size: {{c.size}},
+		          color: {{c.color}}
+	              }
+              };
+
+          {% endfor %}
+var data = [ 
+          {% for c in temperatureData.clusters%}
+           trace{{c.id}},
+          {% endfor %}
+           ];
+
+var layout = {
+
+    legend: {
+    y: 0.5,
+    yref: 'paper',
+    font: {
+        family: 'Arial, sans-serif',
+        size: 20,
+        color: 'grey',
+          }
+            },
+    title:'Species Temperature Data',
+
+    shapes: [
+	
+	{% for s in temperatureData.shapes%}
+        
+	{
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+	    y0: {{s.yStart}},
+            x1: 1,
+	    y1: {{s.yEnd}},
+	    fillcolor: {{s.color}},
+	    opacity: {{s.opacity}},
+            line: {
+                width: 0
+            }
+        },
+        
+	{% endfor %}
+        
+        ],
+};
+
+Plotly.newPlot('myDiv', data, layout);
+
+</script>
+               {% for s in speciesList%}
+              <p>
+                <a href="/{{ s.name }}">{{s.name}}</a>
+              </p>
+               {% endfor %}
+      </body>
+
+</html>

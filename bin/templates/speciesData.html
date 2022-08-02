@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+  <html>
+      <head>
+          <meta charset="utf-8">
+          <title>GenomeWalk</title>
+          <script src="{{url_for('static', filename='plotly.js')}}"></script>
+          <script src="{{url_for('static', filename='d3.v4.min.js')}}"></script>
+      </head>
+      <body>
+	  <h1>{{s.name}} - {{s.species}} - {{gName}}</h1>
+          <div id="tester" style="width:1000px;height:500px;"></div>
+          <div id="myDiv" style="width:1000px;height:500px;"></div>
+          <div id="myDiv2" style="width:1000px;height:500px;"></div> 
+         <script>
+
+
+        	TESTER = document.getElementById('tester');
+
+                var layout = {
+                    title: "Repeat size distribution found by 3 different seach Methods",
+                    font:{family: 'Raleway, sans-serif'},
+                    bargap :0,
+                    barmode: 'overlay'
+
+                             };
+
+	        Plotly.newPlot( TESTER,[
+                                           {
+                                             y: {{s.histograms["rmSizeHist"].getDict()["histogram"]|safe}},
+                                             x: {{s.histograms["rmSizeHist"].getDict()["bins"]|safe}},
+                                             type: 'bar',
+                                             name: 'Whole Genome RepeatMask',
+                                             marker: {
+                                                 color: 'rgb(104,104,204)',
+                                                 opacity: 0.5
+                                                     }, 
+                                            },
+                                           {
+                                             y: {{s.histograms["gwCSizeHist"].getDict()["histogram"]|safe}},
+                                             x: {{s.histograms["gwCSizeHist"].getDict()["bins"]|safe}},
+                                             type: 'bar',
+                                             name: 'Same Strand Intragenic Repeats',
+                                             marker: {
+                                                 color: 'rgb(204,104,104)',
+                                                 opacity: 0.5
+                                                     }, 
+                                            },
+                                           {
+                                             y: {{s.histograms["gwSizeHist"].getDict()["histogram"]|safe}},
+                                             x: {{s.histograms["gwSizeHist"].getDict()["bins"]|safe}},
+                                             type: 'bar',
+                                             name: 'Inverse Strand Intragenic Repeats',
+                                             marker: {
+                                                 color: 'rgb(104,204,104)',
+                                                 opacity: 0.5
+                                                     }, 
+                                            }
+
+                                       ],
+                                       layout
+                              );
+z1 = {{s.histograms2d["gwSizeHist2d"].getDict()["histogram"]|safe}};
+z2 = {{s.histograms2d["gwCSizeHist2d"].getDict()["histogram"]|safe}};
+
+var data_z1 = {z: z1,
+	       type: 'surface',
+	       colorscale: 'Jet',
+               cmin: 0,
+               cmax: {{maxY}}
+              };
+
+var data_z2 = {z: z2,
+	       type: 'surface',
+	       colorscale: 'Jet',
+               cmin: 0,
+	       cmax: {{maxY}}
+               };
+var gwLayout = {
+	         title: "Plus/Minus Blastn Matches Found Inside Genic Regions",
+                 scene:{ 
+                       xaxis: {
+	                       ticktext:['65%','70%','75%','80%','85%', '90%','95%', '100%'],
+	                       tickvals:[0,5,10,15,20,25,30,35],
+                               title: "Match Percentage"
+                               },
+		       yaxis: {title: "Match Length" },
+                       zaxis: {range: [0, {{maxY}}] },
+		       }
+               };
+
+var gwcLayout = {
+                 title: "Plus/Plus Blastn Matches Found Inside Genic Regions",
+                 scene:{
+                       xaxis: {
+                               ticktext:['65%','70%','75%','80%','85%', '90%','95%', '100%'],
+                               tickvals:[0,5,10,15,20,25,30,35],
+                               title: "Match Percentage"
+                               },
+                       yaxis: {title: "Match Length"},
+	               zaxis: {range: [0, {{maxY}}] }
+		 }
+               };
+
+Plotly.newPlot('myDiv', [data_z1],gwLayout);
+Plotly.newPlot('myDiv2', [data_z2],gwcLayout);
+          </script>
+
+      </body>
+  </html>

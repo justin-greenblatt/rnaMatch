@@ -1,0 +1,2 @@
+ENSEMBLE_FTP_REGEX_GET_SPECIES = "/([\w\\-\d]+)/.?.?\">(?P<name>[A-Za-z '_\\-\\.]+)</a></b><br /> <i>(?P<species>[A-Z]?[a-z ]+)</i></td><td"
+GET_REPEAT_MASK_SPECIES_REGEX = r'href=\"(http://www.repeatmasker.org/species/.*?)\"'
