@@ -1,7 +1,7 @@
 
 """
 Developed for python3.9
-justingreeblatt@github | last updated 12/06/2022
+justingreeblatt@github | last updated 3/08/2022
 
 This iterates over the genome and annotation and calls blast (rev_blast.py) on each gtf coordinate.
 
@@ -32,21 +32,15 @@ import sys
 from Bio import SeqIO
 import re
 
-from settings.directories import LOGGING_CONFIG, PROCESSES_CONFIG, DIRECTORIES_CONFIG
 
+from settings import pConfig, dConfig, loggingConfigPath
 import gzip
 import logging
 import logging.config
 
 #Setting up Logging
-logging.config.fileConfig(LOGGING_CONFIG)
+logging.config.fileConfig(loggingConfigPath)
 logger = logging.getLogger(__name__)
-
-pConfig = ConfigParser()
-pConfig.read(PROCESSES_CONFIG)
-
-dConfig = ConfigParser(interpolation = ExtendedInterpolation())
-dConfig.read(DIRECTORIES_CONFIG)
 
 #Genome
 IN_FILE_GENOME = sys.argv[1]
@@ -60,6 +54,7 @@ CONTROL_OUT_FILE = sys.argv[4]
 logger.debug(f"STARTING genomeWalk:{sys.argv[0]} {sys.argv[1]} {sys.argv[2]} {sys.argv[3]} {sys.argv[4]}")
 
 #create output files
+
 new = open(OUT_FILE,'x')
 newControl = open(CONTROL_OUT_FILE, 'x')
 new.write("geneId,chromossome, geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")

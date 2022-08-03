@@ -2,8 +2,8 @@ from os import environ
 from os.path import join
 from time import time
 
-APLICATION_PATH = join("/home/greenblattcloud2/", "blastWeb")
-DATA_PATH = join("/home/greenblattcloud2/", "data")
+APLICATION_PATH = join(environ.get("HOME"), "blastWeb")
+DATA_PATH = join(environ.get("HOME"), "data")
 
 
 GTF_FOLDER = join(DATA_PATH, "gtf")
@@ -44,7 +44,7 @@ TEST_REV_BLAST_OUT_FILE = join(TEST_FOLDER, "testOutMinus.csv")
 TEST_REV_BLAST_CONTROL_OUT_FILE = join(TEST_FOLDER, "testOutPlus.csv")
 
 ENSEMBL_HTML_PATH = join(DATA_PATH, "static", "ensemblGenomes.html")
-FILE_DIRECTORIES = (DATA_PATH, "static", "localDataDirectories.json")
+FILE_DIRECTORIES = join(DATA_PATH, "static", "localDataDirectories.json")
 LOG_FOLDER = join(APLICATION_PATH, "logs")
 ANAGE_DATA_FILE = join(DATA_PATH, "anAge", "anage.txt")
 LOGGING_CONFIG = join(APLICATION_PATH, "bin", "settings", "logging.ini")

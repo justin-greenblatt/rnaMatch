@@ -5,14 +5,7 @@ import sys
 import logging
 import logging.config
 import Bio.Blast.NCBIXML as BlastReader
-from settings.directories import LOGGING_CONFIG, PROCESSES_CONFIG, DIRECTORIES_CONFIG
-from configparser import ConfigParser, ExtendedInterpolation
-
-pConfig = ConfigParser()
-pConfig.read(PROCESSES_CONFIG)
-
-dConfig = ConfigParser(interpolation = ExtendedInterpolation())
-dConfig.read(DIRECTORIES_CONFIG)
+from settings import pConfig, dConfig, LOGGING_CONFIG 
 
 logging.config.fileConfig(LOGGING_CONFIG)
 logger = logging.getLogger("revBlast")
