@@ -1,15 +1,9 @@
 from subprocess import Popen, PIPE
 import sys, os
-sys.path.insert(1, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
-from settings.directories import DIRECTORIES_CONFIG, PROCESSES_CONFIG
-from configparser import ConfigParser, ExtendedInterpolation 
 
-pConfig = ConfigParser()
-pConfig.read(PROCESSES_CONFIG)
+sys.path.insert(0, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
 
-dConfig = ConfigParser(interpolation = ExtendedInterpolation())
-dConfig.read(DIRECTORIES_CONFIG)
-
+from settings import pConfig, dConfig
 
 class TestRevBlast:
 
