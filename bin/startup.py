@@ -11,10 +11,10 @@ def runCommand(command):
     print("finished")
     return p.communicate()
 
-for p in sConfig["apt"]:
+for p in sConfig["apt"].values():
     runCommand(["sudo", "apt", "install", p, "-y"])
-for q in sConfig["pip"]:
-    runCommand(["sudo", "apt", "install", p, "--no-input"])
+for q in sConfig["pip"].values():
+    runCommand(["sudo", "pip3", "install", q, "--no-input"])
 
 #formatDisk
 formatDiskCommand = ["sudo", "mkfs.ext4", "-m", "0", "-E", "lazy_itable_init=0,lazy_journal_init=0,discard", "/dev/sdb"]
