@@ -2,12 +2,24 @@ from subprocess import Popen, PIPE
 from settings import sConfig, dConfig, pConfig
 import os
 
+#Dont forget to run with sudo -E to no mess up $HOME
+
+def runCommand(command):
+    p = Popen(command, stdout = PIPE, stdin = PIPE)
+    print(" ".join(command))
+    p.wait()
+    print("finished")
+    return p.communicate()
+
+for p in sConfig["apt"]:
+    runCommand(["sudo", "apt", "install", p, "-y"])
+for q in sConfig["pip"]:
+    runCommand(["sudo", "apt", "install", p, "--no-input"])
 
 #formatDisk
 formatDiskCommand = ["sudo", "mkfs.ext4", "-m", "0", "-E", "lazy_itable_init=0,lazy_journal_init=0,discard", "/dev/sdb"]
+runCommand(formatDiskCommand)
 
-pFormat = Popen(formatDiskCommand, stdout = PIPE, stdin = PIPE)
-pFormat.wait()
 print("-----formatedDisk-----")
 
 def createDir(dirName):
@@ -16,10 +28,8 @@ def createDir(dirName):
 
 createDir(dConfig["common"]["data_path"])
 mountDiskCommand = ["sudo", "mount", "-o", "discard,defaults", "/dev/sdb", dConfig["common"]["data_path"]]
+runCommand(mountDiskCommand)
 
-
-pMount = Popen(mountDiskCommand, stdout = PIPE, stdin = PIPE)
-pMount.wait()
 print("-----mounted disk-----")
 
 for d in dConfig["resources"].values():
