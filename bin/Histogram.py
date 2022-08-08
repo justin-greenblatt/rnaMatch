@@ -7,12 +7,11 @@ import logging
 from os.path import join
 from numpy import histogram, histogram2d, array
 from time import time
-from settings.logs import HISTOGRAM_LOG_PATH, HISTOGRAM_LOG_LEVEL, HISTOGRAM2D_LOG_PATH, HISTOGRAM2D_LOG_LEVEL
 from settings.directories import HISTOGRAMS_FOLDER, HISTOGRAMS2D_FOLDER
 import json
 from sys import exit
 
-logging.basicConfig(filename= HISTOGRAM_LOG_PATH, level=HISTOGRAM_LOG_LEVEL)
+#logging.basicConfig(filename= HISTOGRAM_LOG_PATH, level=HISTOGRAM_LOG_LEVEL)
 
 class Histogram:
     """
@@ -26,12 +25,12 @@ class Histogram:
     """
 
     def __init__(self, genome, dataKey, histKey, getDataFunc, bins, minMax, skip=1):
-        logging.basicConfig(filename= HISTOGRAM_LOG_PATH, level=HISTOGRAM_LOG_LEVEL)
-        logging.info("Generating 1 dimensional histogram {} for {}|{}".format(histKey, genome.name, genome.species))
+        #logging.basicConfig(filename= HISTOGRAM_LOG_PATH, level=HISTOGRAM_LOG_LEVEL)
+        #logging.info("Generating 1 dimensional histogram {} for {}|{}".format(histKey, genome.name, genome.species))
 
         #Searching for previously computed histogram for this genome
         if not histKey in genome.fileDirectories:
-            logging.debug("Generating 1D Histogram \t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(genome.name, dataKey, histKey, getDataFunc, bins, minMax, skip, time()))
+            #logging.debug("Generating 1D Histogram \t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(genome.name, dataKey, histKey, getDataFunc, bins, minMax, skip, time()))
             #load data source file
             dataHandler = open(genome.fileDirectories[dataKey])
 
@@ -46,7 +45,7 @@ class Histogram:
                         x.append(getDataFunc(i))
                     except Exception as e:
                         print(e)
-                        logging.error("{}-{}\n{}".format(n,i,e))
+                        #logging.error("{}-{}\n{}".format(n,i,e))
                         exit(0)
             #Generate histogram with numpy.histogram function
             hist = histogram(x,bins,range=minMax)
@@ -63,7 +62,7 @@ class Histogram:
             # In the case the data already exists just link genomoe object to path
         else:
             self.path = genome.fileDirectories[histKey]
-            logging.debug("Histogram exists at {} retrieving it \t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.path, genome.name, dataKey, histKey, getDataFunc, bins, minMax, skip, time()))
+            #logging.debug("Histogram exists at {} retrieving it \t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.path, genome.name, dataKey, histKey, getDataFunc, bins, minMax, skip, time()))
 
 
     def getDict(self):
@@ -88,11 +87,11 @@ class Histogram2d(Histogram):
     TIMESTAMP
     """
     def __init__(self, genome, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip=1):
-        logging.basicConfig(filename= HISTOGRAM2D_LOG_PATH, level=HISTOGRAM2D_LOG_LEVEL)
-        logging.info("Generating 2 dimensional histogram {} for {}|{}".format(histKey, genome.name, genome.species))
+        #logging.basicConfig(filename= HISTOGRAM2D_LOG_PATH, level=HISTOGRAM2D_LOG_LEVEL)
+        #logging.info("Generating 2 dimensional histogram {} for {}|{}".format(histKey, genome.name, genome.species))
         #if histogram not generated yet
         if not histKey in genome.fileDirectories:
-            logging.debug("Generating 2D Histogram \t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(genome.name, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip, time()))
+            #logging.debug("Generating 2D Histogram \t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(genome.name, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip, time()))
             dataHandler = open(genome.fileDirectories[dataKey])
             #filter data point (x,y) from data source lines
             xyPair = []
@@ -102,7 +101,7 @@ class Histogram2d(Histogram):
                         xyPair.append(getDataFunc(i))
                     except Exception as e:
                         print(e)
-                        logging.error("{}{}\n{}".format(n,i,e))
+                        #logging.error("{}{}\n{}".format(n,i,e))
                         exit(0)
             dataHandler.close()
             #separate to two arrays the ordered pair
@@ -121,4 +120,4 @@ class Histogram2d(Histogram):
             self.path = outPath
         else:
             self.path =  genome.fileDirectories[histKey]
-            logging.debug("2D Histogram exists at {} retrieving it \t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.path, genome.name, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip, time()))
+            #logging.debug("2D Histogram exists at {} retrieving it \t{}\t{}\t{}\t{}\t{}\t{}\n".format(self.path, genome.name, dataKey, histKey, getDataFunc, xyBins, xyMinMax, skip, time()))

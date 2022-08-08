@@ -13,33 +13,15 @@ class TestNcbiData:
     assemblieLinks = dummyData[assemblieName]
     platypus = ncbiData(assemblieName, assemblieLinks)
 
-    def test_ncbiDataInit(self):
+    def test_ncbiData(self):
         assert TestNcbiData.platypus.id == TestNcbiData.assemblieName.replace('/','_')
+        TestNcbiData.platypus.getResource("dna")
+        genomeDir = TestNcbiData.platypus.fileDirectories["dna"]
+        assert os.path.isfile(genomeDir)
 
-    def getAndDelete(self, key):
+        TestNcbiData.platypus.getResource("gtf")
+        gtfDir = TestNcbiData.platypus.fileDirectories["gtf"]
+        assert os.path.isfile(gtfDir)
 
-        TestNcbiData.platypus.getResource(key)
-        keyFileDir = TestNcbiData.platypus.fileDirectories[key]
-        assert os.path.isfile(keyFileDir)
-        TestNcbiData.platypus.deleteResource(key)
-        assert not os.path.isfile(keyFileDir)
 
-    def test_gtf(self):
-        self.getAndDelete("gtf")
-    def test_genome(self):
-        self.getAndDelete("dna")
-    def test_mrna(self):
-        self.getAndDelete("mrna")
-    def test_GenomeWalk(self):
-        TestNcbiData.platypus.runGenomeWalk()
-        assert os.path.isfile(TestNcbiData.platypus.fileDirectories["genomeWalk"])
-        assert os.path.isfile(TestNcbiData.platypus.fileDirectories["genomeWalkControl"])
-    def test_rnaWalk(self):
-        TestNcbiData.platypus.runRnaWalk()
-        assert os.path.isfile(TestNcbiData.platypus.fileDirectories["rnaWalk"])
-        assert os.path.isfile(TestNcbiData.platypus.fileDirectories["rnaWalkControl"])
 
-if __name__ == "__main__":
-    t = TestNcbiData()
-    g = t.platypus
-    g.runGenomeWalk()

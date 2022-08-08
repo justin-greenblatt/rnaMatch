@@ -1,15 +1,8 @@
 import sys, os
 
-sys.path.insert(1, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
+sys.path.insert(0, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
 from subprocess import Popen, PIPE
-from settings.directories import PROCESSES_CONFIG, DIRECTORIES_CONFIG
-from configparser import ConfigParser, ExtendedInterpolation
-
-pConfig = ConfigParser()
-pConfig.read(PROCESSES_CONFIG)
-
-dConfig = ConfigParser(interpolation = ExtendedInterpolation())
-dConfig.read(DIRECTORIES_CONFIG)
+from settings import dConfig, pConfig
 
 def test_genomeWalk():
     if os.path.isfile(dConfig["tests"]["TEST_GENOME_WALK_OUT"]):

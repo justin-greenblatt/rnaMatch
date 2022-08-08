@@ -10,7 +10,6 @@ from shutil import unpack_archive
 from os import listdir
 import logging
 from time import time
-from settings.logs import DOWNLOADS_LOG_PATH, DOWNLOADS_LOG_LEVEL
 from typing import List, Dict, TypedDict
 import re
 

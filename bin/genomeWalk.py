@@ -57,8 +57,8 @@ logger.debug(f"STARTING genomeWalk:{sys.argv[0]} {sys.argv[1]} {sys.argv[2]} {sy
 
 new = open(OUT_FILE,'x')
 newControl = open(CONTROL_OUT_FILE, 'x')
-new.write("geneId,chromossome, geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
-newControl.write("geneId,chromossome,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
+new.write("geneId,chrom, geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
+newControl.write("geneId,chrom,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n")
 new.close()
 newControl.close()
 
@@ -78,7 +78,7 @@ else:
 
 flag = True
 
-chromosome = next(genomeIterator, None)
+chrom = next(genomeIterator, None)
 
 #function for getting next gene in GTF files.
 """
@@ -101,21 +101,21 @@ gene = getNextGene(gtfIterator)
 #Start iterating over genome and annotations
 while flag:
 
-    if isinstance(chromosome, type(None)):
+    if isinstance(chrom, type(None)):
 
         sys.exit(0)
         break
 
     #skipComments
-    while gene.split('\t')[0] == chromosome.id:
-        
+    while gene.split('\t')[0] == chrom.id:
+            
         #Getting data of the gene
         geneID = re.search(r'gene_id \"(.+?)\"', gene).group(1)
-        geneChrom = chromossome.id
+        geneChrom = chrom.id
         geneStart = int(gene.split('\t')[3])
         geneEnd = int(gene.split('\t')[4])
         geneStrand = gene.split('\t')[6]
-        geneSeq = str(chromosome.seq[max(0, geneStart - int(pConfig["genomeWalk"]["DOWNSTREAM_GENE_FLANK"])):min(geneEnd + int(pConfig["genomeWalk"]["UPSTREAM_GENE_FLANK"]), len(chromosome.seq))])
+        geneSeq = str(chrom.seq[max(0, geneStart - int(pConfig["genomeWalk"]["DOWNSTREAM_GENE_FLANK"])):min(geneEnd + int(pConfig["genomeWalk"]["UPSTREAM_GENE_FLANK"]), len(chrom.seq))])
 
         #Writing gene data to temporary file 
         tempFilename = "temp_fasta_" + geneID + '.fa'
@@ -141,7 +141,7 @@ while flag:
         #getControl
 
         controlCommand = command + [dConfig["scripts"]["REV_BLAST_PATH"], tempFilename, CONTROL_OUT_FILE, "plus"]
-        logger.debug(f"genomeWalk Test running command: {controlCommand}")
+        logger.debug(f"genomeWalk control running command: {controlCommand}")
         pc = Popen(controlCommand, stdout = PIPE)
         pc.wait()
 
@@ -149,7 +149,10 @@ while flag:
         os.remove(tempFilename)
 
         gene = getNextGene(gtfIterator)
-    chromosome = next(genomeIterator, None)
+    chrom = next(genomeIterator, None)
+    if chrom == None:
+        flag = False
+
 logger.debug(f"ENDING genomeWalk:{sys.argv[0]} {sys.argv[1]} {sys.argv[2]} {sys.argv[3]} {sys.argv[4]}")
 gtfHandler.close()
 genomeHandler.close()

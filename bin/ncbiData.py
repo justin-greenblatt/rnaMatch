@@ -33,11 +33,11 @@ from myUtils import downloadFromURL, dictComparison
 from Histogram import Histogram, Histogram2d
 
 #My constants/parameters importS
-from settings.directories import  RESOURCE_FOLDERS, LOGGING_CONF, GENOME_WALK_PATH, RNA_WALK_PATH
+from settings.directories import  RESOURCE_FOLDERS, GENOME_WALK_PATH, RNA_WALK_PATH
 from settings.resourceLinkRegex import RESOURCE_REGEX
-
+from settings import lConfigPath
 #Setting up Logging
-logging.config.fileConfig(LOGGING_CONF)
+logging.config.fileConfig(lConfigPath)
 logger = logging.getLogger("ncbiData")
 
 #Decorators

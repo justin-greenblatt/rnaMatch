@@ -14,10 +14,7 @@ dConfigOut = open(os.path.join(configsPath, "directories.ini"), 'w')
 dConfig.write(dConfigOut)
 dConfigOut.close()
 
-loggingConfigPath = LOGGING_CONFIG = os.path.join(configsPath, "logging.ini")
-
+loggingConfigPath = lConfigPath = LOGGING_CONFIG = os.path.join(configsPath, "logging.ini")
 
 sConfig = ConfigParser(interpolation = ExtendedInterpolation())
 sConfig.read(os.path.join(configsPath, "setup.ini"))
-
-
