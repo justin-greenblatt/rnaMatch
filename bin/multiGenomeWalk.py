@@ -120,21 +120,7 @@ class revBlastGene:
         self.genomeWalkFileDir = join(self.__class__.genomeWalkTestFolder, f"{self.geneId}.csv")
         self.genomeWalkControlFileDir = join(self.__class__.genomeWalkControlFolder, f"{self.geneId}_control.csv")
 
-        #write out fasta file of extracted sequence.
-        fastaHandler = open(self.fastaFileDir, 'w')
-        fastaHeader = ">" + ",".join([self.geneId, self.chromId, str(self.geneStart), str(self.geneEnd), str(self.geneStrand)]) + "\n"
-        fastaHandler.write(fastaHeader)
-        seq = self.__class__.genomeDict.getSeq(self.chromId, self.geneStart, self.geneEnd)
-        fastaHandler.write(seq + '\n')
-        fastaHandler.close()
-        #write out headers for genomeWalk csv files.
-        gwHandler = open(self.genomeWalkFileDir, 'w')
-        gwcHandler = open(self.genomeWalkControlFileDir, 'w')
-        gwHeader = "geneId,chrom,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n"
-        gwHandler.write(gwHeader)
-        gwcHandler.write(gwHeader)
-
-
+       
     def getTestCommand(self) -> list[str]:
         """
         function for generating a revBlast.py test command for Popen to open a process later.
@@ -160,21 +146,44 @@ class revBlastGene:
                 pConfig["revBlast"]["INTERPRETER_FLAGS"]]
                         if a])
 
-        controlCommand = command + [dConfig["scripts"]["REV_BLAST_PATH"], self.fastaFileDir, self.genomeWalkControlFileDir, "plus"]
+        controlCommand = preCommand + [dConfig["scripts"]["REV_BLAST_PATH"], self.fastaFileDir, self.genomeWalkControlFileDir, "plus"]
         return controlCommand
 
+    def createFiles(self):
+ 
+        #write out fasta file of extracted sequence.
+        fastaHandler = open(self.fastaFileDir, 'w')
+        fastaHeader = ">" + ",".join([self.geneId, self.chromId, str(self.geneStart), str(self.geneEnd), str(self.geneStrand)]) + "\n"
+        fastaHandler.write(fastaHeader)
+        seq = self.__class__.genomeDict.getSeq(self.chromId, self.geneStart, self.geneEnd)
+        fastaHandler.write(seq + '\n')
+        fastaHandler.close()
+
+        #write out headers for genomeWalk csv files.
+        gwHandler = open(self.genomeWalkFileDir, 'w')
+        gwcHandler = open(self.genomeWalkControlFileDir, 'w')
+        gwHeader = "geneId,chrom,geneStart,geneEnd,geneStrand,queryStart,queryEnd,subjectStart,subjectEnd,matchlength,matchPct\n"
+        gwHandler.write(gwHeader)
+        gwcHandler.write(gwHeader)
+        gwcHandler.close()
+        gwHandler.close()
     def run(self):
+        self.createFiles()
         self.revBlastProcess = Popen(self.getTestCommand(), stdin = PIPE, stdout = PIPE)
         self.revBlastControlProcess = Popen(self.getControlCommand(), stdin = PIPE, stdout = PIPE)
 
     def poll(self) -> int:
         a = self.revBlastProcess.poll()
-        b = self.revBlastProcess.poll()
+        b = self.revBlastControlProcess.poll()
         if a == 0 and b == 0:
             return 0
         else:
             return 1
-
+    def close(self):
+        #needs to be done to close stdin or stdout files so overall number of open files does not overflow
+        to,te = self.revBlastProcess.communicate()
+        co,ce = self.revBlastControlProcess.communicate()
+ 
 class RevBlastProcessStack:
     """
     A class for managing paralel processes of revBlast.
@@ -193,22 +202,24 @@ class RevBlastProcessStack:
         print("fulling up process stack for first time")
         for l in range(self.stackSize):
             if len(self.stack) != 0:
-                newP = self.stack.pop()
+                newP = self.stack.pop(0)
                 newP.run()
                 self.processes.append(newP)
         print("cycling fineshed processes. moving finished to self.finished and adding new from self.stack")
         while len(self.stack) != 0:
             for i,p in enumerate(self.processes):
                 if p.poll() == 0:
-                    self.finished.append(self.processes.pop(i))
-                    newP = self.stack.pop()
+                    oldP = self.processes.pop(i)
+                    oldP.close()
+                    self.finished.append(oldP)
+                    newP = self.stack.pop(0)
                     newP.run()
                     print(f"{time.time()} removing {p.geneId} , adding {newP.geneId}")
                     self.processes.append(newP)
-            time.sleap(self.refreshTime)
+            time.sleep(self.refreshTime)
         print("stack empty. finishing last processes")
         while any(list([a.poll() != 0 for a in self.processes])):
-            time.sleap(self.refreshTime)
+            time.sleep(self.refreshTime)
         self.finished.extend(self.processes)
         self.processes = []
 

@@ -1,8 +1,14 @@
 from subprocess import Popen, PIPE
-from settings import sConfig, dConfig, pConfig
 import os
+from settings import dConfig as homelessConfig
 
-#Dont forget to run with sudo -E to no mess up $HOME
+#configure home Directorie
+homelessConfig["common"]["HOME_DIR"] = os.environ.get("HOME")
+dConfigOut = open(os.path.join(configsPath, "directories.ini"), 'w')
+homelessConfig.write(dConfigOut)
+dConfigOut.close()
+
+from settings import sConfig, dConfig, pConfig
 
 def runCommand(command):
     p = Popen(command, stdout = PIPE, stdin = PIPE)

@@ -1,2 +1,0 @@
-# blastWeb
-update of blastGenomeWalk

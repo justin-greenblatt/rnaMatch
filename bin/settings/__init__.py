@@ -9,11 +9,6 @@ pConfig.read(os.path.join(configsPath, "processes.ini"))
 dConfig = ConfigParser(interpolation = ExtendedInterpolation())
 dConfig.read(os.path.join(configsPath, "directories.ini"))
 
-dConfig["common"]["HOME_DIR"] = os.environ.get("HOME")
-dConfigOut = open(os.path.join(configsPath, "directories.ini"), 'w')
-dConfig.write(dConfigOut)
-dConfigOut.close()
-
 loggingConfigPath = lConfigPath = LOGGING_CONFIG = os.path.join(configsPath, "logging.ini")
 
 sConfig = ConfigParser(interpolation = ExtendedInterpolation())

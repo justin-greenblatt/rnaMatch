@@ -8,8 +8,8 @@ import Bio.Blast.NCBIXML as BlastReader
 from settings import pConfig, dConfig, LOGGING_CONFIG 
 
 logging.config.fileConfig(LOGGING_CONFIG)
-logger = logging.getLogger("revBlast")
-logger.debug(f'Running revBlast {" ".join(sys.argv)}')
+#logger = logging.getLogger("revBlast")
+#logger.debug(f'Running revBlast {" ".join(sys.argv)}')
 
 #Fasta File
 IN_FILE = sys.argv[1]
@@ -26,7 +26,7 @@ if STRAND == "minus":
 elif STRAND == "plus":
     tempPrefix = "blast_temp_control_"
 else:
-    logger.error("Entry error in BlastRev. Exiting")
+    #logger.error("Entry error in BlastRev. Exiting")
     sys.exit(0)
 
 name = tempPrefix + sys.argv[1].split("/")[-1].split(".")[0]
@@ -50,7 +50,7 @@ makeDbCommand = list([a for a in
         if a])
 
 p = Popen(makeDbCommand, stdout = PIPE)
-logger.debug(f'Creating Blast {" ".join(makeDbCommand)}')
+#logger.debug(f'Creating Blast {" ".join(makeDbCommand)}')
 p.wait()
 
 #RUNING BLAST ALIGNER
@@ -68,7 +68,7 @@ blastnCommand = list([a for a in
         pConfig["blastn"]["EXTRA_FLAG_VALUE_PAIRS"]]
         if a])
 
-logger.debug(f'Running blastn {" ".join(blastnCommand)}')
+#logger.debug(f'Running blastn {" ".join(blastnCommand)}')
 b = Popen(blastnCommand, stdout = PIPE)
 b.wait()
 
@@ -82,10 +82,10 @@ blastRecords = []
 try:
     blastRecords = blast[0].alignments[0].hsps
 except:
-    logger.error(f'Not able to read blast results from {blastResultsPath}')
+    #logger.error(f'Not able to read blast results from {blastResultsPath}')
     sys.exit(0)
 
-logger.debug(f'Writing out blast results: nHits: {len(blastRecords)}')
+#logger.debug(f'Writing out blast results: nHits: {len(blastRecords)}')
 for a in blastRecords:
     summary += "{},{},{},{},{},{},{}\n".format(fastaHeader.rstrip('\n').lstrip('>'),
                                            a.query_start,
@@ -104,5 +104,5 @@ tempFileSuffixes = [".nhr",".nsq",".nin",".xml"]
 tempFiles = [blastDbPath + s for s in tempFileSuffixes]
 for f in tempFiles:
     os.remove(f)
-    logger.debug(f'Removing{f}')
+    #logger.debug(f'Removing{f}')
 
