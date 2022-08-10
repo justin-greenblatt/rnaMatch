@@ -35,7 +35,7 @@ from Histogram import Histogram, Histogram2d
 #My constants/parameters importS
 from settings.directories import  RESOURCE_FOLDERS, GENOME_WALK_PATH, RNA_WALK_PATH
 from settings.resourceLinkRegex import RESOURCE_REGEX
-from settings import lConfigPath
+from settings import lConfigPath, dConfig, pConfig
 #Setting up Logging
 logging.config.fileConfig(lConfigPath)
 logger = logging.getLogger("ncbiData")
@@ -186,39 +186,20 @@ class ncbiData:
     def runGenomeWalk(self) -> None:
         """Run genomeWalk.py for this object. Download input gtf and genome files if they are not downloaded yet. Then create process
         """
-        logger.info("Running genomeWalk for {}|{}".format(self.assembly, self.species))
+        if not "gtf" in self.fileDirectories:
+            self.getResource("gtf")
+        if not "dna" in self.fileDirectories:
+            self.getResource("dna")
 
-        blastOutFile = join(RESOURCE_FOLDERS["genomeWalk"], self.id + ".csv")
-        blastControlOutFile = join(RESOURCE_FOLDERS["genomeWalkControl"], self.id + "_control.csv")
-
-        if not blastOutFile in self.fileDirectories:
-            if not "gtfAnnotation" in self.fileDirectories:
-                try:
-                    self.getResource("gtf")
-                except:
-                    logger.error("getGtf failed for {}|{}".format(self.assembly, self.species))
-
-            if not "dna" in self.fileDirectories:
-                try:
-                    self.getResource("dna")
-                except:
-                    logger.error("getGenome failed for {}|{}".format(self.assembly, self.species))
-
-            try:
-                 command = ["python3", GENOME_WALK_PATH,
+        command = ["sudo", "-E", "python3", dConfig["scripts"]["multi_genome_walk_path"],
                            self.fileDirectories["dna"],
-                           self.fileDirectories["gtfAnnotation"],
-                           blastOutFile,
-                           blastControlOutFile]
+                           self.fileDirectories["gtf"]]
 
-                 p = Popen(command,stdout = PIPE)
-                 logger.debug("Starting process genomeWalk: command id [{},{}]".format(command, p.id))
-                 p.wait()
-                 logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.id))
-                 self.deleteResource("dna")
-                 self.deleteResource("gtf")
-            except:
-                 logger.error("failed to run genomeWalk for {}|{}".format(self.assembly, self.species))
+        p = Popen(command,stdout = PIPE)
+        p.wait()
+        logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.id))
+        self.deleteResource("dna")
+        self.deleteResource("gtf")
 
 
     @updateResources

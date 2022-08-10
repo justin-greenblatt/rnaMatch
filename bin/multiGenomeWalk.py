@@ -206,7 +206,7 @@ class RevBlastProcessStack:
                 newP.run()
                 self.processes.append(newP)
         print("cycling fineshed processes. moving finished to self.finished and adding new from self.stack")
-        while len(self.stack) != 0:
+        while len(self.stack) - self.stackSize >= 0:
             for i,p in enumerate(self.processes):
                 if p.poll() == 0:
                     oldP = self.processes.pop(i)

@@ -1,7 +1,7 @@
 import os
 from configparser import ConfigParser, ExtendedInterpolation
-configsPath = os.path.realpath(__file__).rstrip("/__init__.py")
 
+configsPath = os.path.realpath(__file__).rstrip("/__init__.py")
 
 pConfig = ConfigParser(interpolation = ExtendedInterpolation())
 pConfig.read(os.path.join(configsPath, "processes.ini"))

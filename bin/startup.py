@@ -1,10 +1,11 @@
 from subprocess import Popen, PIPE
 import os
 from settings import dConfig as homelessConfig
+from settings import configsPath
 
 #configure home Directorie
 homelessConfig["common"]["HOME_DIR"] = os.environ.get("HOME")
-dConfigOut = open(os.path.join(configsPath, "directories.ini"), 'w')
+dConfigOut = open('/' + str(os.path.join(*os.path.realpath(__file__).split('/')[:-1], "settings", "directories.ini")), 'w')
 homelessConfig.write(dConfigOut)
 dConfigOut.close()
 
