@@ -191,13 +191,14 @@ class ncbiData:
         if not "dna" in self.fileDirectories:
             self.getResource("dna")
 
-        command = ["sudo", "-E", "python3", dConfig["scripts"]["multi_genome_walk_path"],
-                           self.fileDirectories["dna"],
-                           self.fileDirectories["gtf"]]
+        command = [pConfig["genomeWalk"]["interpreter"],
+                   dConfig["scripts"]["serial_genome_walk_path"],
+                   self.fileDirectories["dna"],
+                   self.fileDirectories["gtf"]]
 
         p = Popen(command,stdout = PIPE)
         p.wait()
-        logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.id))
+        logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.pid))
         self.deleteResource("dna")
         self.deleteResource("gtf")
 

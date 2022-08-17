@@ -5,14 +5,11 @@ import pytest
 from settings.directories import NCBI_DUMMY_DATA
 import logging
 
-class TestNcbiData:
-
+if __name__ == "__main__":
     
     dummyData = json.load(open(NCBI_DUMMY_DATA))
     assemblieName = list(dummyData)[0]
     assemblieLinks = dummyData[assemblieName]
     platypus = ncbiData(assemblieName, assemblieLinks)
-
-    def test_ncbiData(self):
-        TestNcbiData.platypus.runGenomeWalk()
+    platypus.runGenomeWalk()
        

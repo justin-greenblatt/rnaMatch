@@ -83,22 +83,18 @@ class revBlastGene:
 
     #Defining variables shared by instances. Folders and GenomeDict instance.
     genomeId = IN_FILE_GENOME.split('/')[-1].rstrip(".fna")
+    preMrnaFolder = join(dConfig["resources"]["pre_mrna_folder"], genomeId)
+    genomeWalkTestFolder = join(dConfig["resources"]["genome_walk_folder"], genomeId)
+    genomeWalkControlFolder = join(dConfig["resources"]["genome_walk_control_folder"], genomeId)
     genomeDict = GenomeDict(IN_FILE_GENOME)
-    dirDict = {
-            "preMrnaFolder" : join(dConfig["resources"]["pre_mrna_folder"], genomeId),
-            "genomeWalkTestFolder" : join(dConfig["resources"]["genome_walk_folder"], genomeId),
-            "genomeWalkControlFolder" : join(dConfig["resources"]["genome_walk_control_folder"], genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["blast_db_folder"], genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["blast_test_out_folder"], genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["blast_control_out_folder"], genomeId)
-
-              }
-
+    #print("{genomeId}, {preMrnaFolder}, {genomeWalkTestFolder}, {genomeWalkControlFolder}")
     def __init__(self, gtfRecord):
 
         self.gtfRecord = gtfRecord
         # checking if genome/species specific folders exist.
-        for d in self.__class__.dirDict.values():
+        for d in [self.__class__.preMrnaFolder,
+                  self.__class__.genomeWalkTestFolder,
+                  self.__class__.genomeWalkControlFolder]:
             if not os.path.isdir(d):
                 try:
                     os.mkdir(d)
@@ -113,63 +109,45 @@ class revBlastGene:
         self.geneStrand = gtfRecord.split('\t')[6]
         #print(f"initiating {self.geneId}") 
         #Define fasta file for extracted gene. If gene already exists. resolve name clash.
-        self.fastaFileDir = join(self.__class__.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
+        self.fastaFileDir = join(self.__class__.preMrnaFolder, f"{self.geneId}.fa")
         if os.path.isfile(self.fastaFileDir):
             print(f"{self.geneId} already exists")
             copies = len(list([a for a in os.listdir(dConfig["resources"]["pre_mrna_folder"]) 
                               if a.split('.')[0].startswith(geneId)]))
             self.geneId = "{}({})".format(self.geneId, copies)
-            self.fastaFileDir = join(self.__class__.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
-        #Defining filenames and directories for species resources.
-        self.genomeWalkFileDir = join(self.__class__.dirDict["genomeWalkTestFolder"], f"{self.geneId}.csv")
-        self.genomeWalkControlFileDir = join(self.__class__.dirDict["genomeWalkControlFolder"], f"{self.geneId}_control.csv")
-        self.blastDBDir = join(self.__class__.dirDict["blastDBFolder"], f"{self.geneId}")
-        self.blastTestOutDir = join(self.__class__.dirDict["blastTestOutDir"], f"{self.geneId}")
-        self.blastControlOutDir =  join(self.__class__.dirDict["blastControlOutDir"], f"{self.geneId}")
+            self.fastaFileDir = join(self.__class__.preMrnaFolder, f"{self.geneId}.fa")
 
-    def getBlastDBCommand(self) -> list[str]:
+        self.genomeWalkFileDir = join(self.__class__.genomeWalkTestFolder, f"{self.geneId}.csv")
+        self.genomeWalkControlFileDir = join(self.__class__.genomeWalkControlFolder, f"{self.geneId}_control.csv")
 
-        command = list([a for a in 
-                    [pConfig["makeblastdb"]["RUN_PATH"],
-                    "-in" , self.fastaFileDir, 
-                    "-out", self.blastDBDir,
-                    "-dbtype", pConfig["makeblastdb"]["DB_TYPE"],
-                    pConfig["makeblastdb"]["EXTRA_FLAGS"],
-                    pConfig["makeblastdb"]["EXTRA_FLAG_VALUE_PAIRS"]]
-                    if a])
+       
+    def getTestCommand(self) -> list[str]:
+        """
+        function for generating a revBlast.py test command for Popen to open a process later.
+        """
+        preCommand  = list([a for a in [
+                pConfig["revBlast"]["USER"],
+                pConfig["revBlast"]["USER_FLAGS"],
+                pConfig["revBlast"]["INTERPRETER"],
+                pConfig["revBlast"]["INTERPRETER_FLAGS"]]
+                        if a])
 
-        return command
-
-    def getTestCommand(self):
-
-        command = list([a for a in 
-                    [pConfig["blastn"]["RUN_PATH"],
-                    "-query", self.fastaFileDir, 
-                    "-strand", "minus",
-                    "-db", self.blastDBDir,
-                    "-out", self.blastTestOutDir,
-                    "-outfmt", pConfig["blastn"]["OUT_FORMAT"],
-                    pConfig["blastn"]["EXTRA_FLAGS"],
-                    pConfig["blastn"]["EXTRA_FLAG_VALUE_PAIRS"]]
-                    if a])
-
-        return command
+        testCommand = preCommand + [dConfig["scripts"]["REV_BLAST_PATH"], self.fastaFileDir, self.genomeWalkFileDir, "minus"]
+        return testCommand
 
     def getControlCommand(self) -> list[str]:
-    
-        command = list([a for a in 
-                    [pConfig["blastn"]["RUN_PATH"],
-                    "-query", self.fastaFileDir, 
-                    "-strand", "plus",
-                    "-db", self.blastDBDir,
-                    "-out", self.blastControlOutDir,
-                    "-outfmt", pConfig["blastn"]["OUT_FORMAT"],
-                    pConfig["blastn"]["EXTRA_FLAGS"],
-                    pConfig["blastn"]["EXTRA_FLAG_VALUE_PAIRS"]]
-                    if a])
+        """
+        function for generating a revBlast.py control commanf for Popen to open a process later.
+        """
+        preCommand  = list([a for a in [
+                pConfig["revBlast"]["USER"],
+                pConfig["revBlast"]["USER_FLAGS"],
+                pConfig["revBlast"]["INTERPRETER"],
+                pConfig["revBlast"]["INTERPRETER_FLAGS"]]
+                        if a])
 
-        
-        return command
+        controlCommand = preCommand + [dConfig["scripts"]["REV_BLAST_PATH"], self.fastaFileDir, self.genomeWalkControlFileDir, "plus"]
+        return controlCommand
 
     def createFiles(self):
  
@@ -190,10 +168,13 @@ class revBlastGene:
         gwcHandler.close()
         gwHandler.close()
 
+    def wait(self):
+        self.revBlastProcess.wait()
+        self.revBlastControlProcess.wait()
+
+
     def run(self):
         self.createFiles()
-        self.createBlastDBProcess = Popen(self.getBlastDBCommand(), stdin = PIPE, stdout = PIPE)
-        self.createBlastDBProcess.wait()
         self.revBlastProcess = Popen(self.getTestCommand(), stdin = PIPE, stdout = PIPE)
         self.revBlastControlProcess = Popen(self.getControlCommand(), stdin = PIPE, stdout = PIPE)
 
@@ -206,12 +187,10 @@ class revBlastGene:
             return 1
     def close(self):
         #needs to be done to close stdin or stdout files so overall number of open files does not overflow
-        do,de = self.createBlastDBProcess.communicate()
         to,te = self.revBlastProcess.communicate()
         co,ce = self.revBlastControlProcess.communicate()
  
 class RevBlastProcessStack:
-
     """
     A class for managing paralel processes of revBlast.
     """
@@ -224,6 +203,11 @@ class RevBlastProcessStack:
 
     def add(self, revBlastObj):
         self.stack.append(revBlastObj)
+    
+    def executeSerial(self):
+        for l in self.stack:
+            l.run()
+            l.wait()
 
     def execute(self):
         print("fulling up process stack for first time")
@@ -264,7 +248,7 @@ def main():
             geneCount += 1
             #print(geneCount)
     print(f"starting paralel processing of {geneCount} genes")
-    rbStack.execute()
+    rbStack.executeSerial()
 
 if __name__ == "__main__":
     main()

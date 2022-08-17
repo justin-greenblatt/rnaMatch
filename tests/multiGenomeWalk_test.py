@@ -4,12 +4,7 @@ sys.path.insert(0, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
 from subprocess import Popen, PIPE
 from settings import dConfig, pConfig
 
-def test_genomeWalk():
-    if os.path.isfile(dConfig["tests"]["TEST_GENOME_WALK_OUT"]):
-        os.remove(dConfig["tests"]["TEST_GENOME_WALK_OUT"])
-    if os.path.isfile(dConfig["tests"]["TEST_GENOME_WALK_CONTROL_OUT"]):
-        os.remove(dConfig["tests"]["TEST_GENOME_WALK_CONTROL_OUT"])
-
+if __name__ == "__main__":
 
     command  = list([a for a in [
             pConfig["genomeWalk"]["USER"],
