@@ -31,7 +31,7 @@ import logging.config
 #My code imports
 from myUtils import downloadFromURL, dictComparison
 from Histogram import Histogram, Histogram2d
-
+import premrnaBlast
 #My constants/parameters importS
 from settings.directories import  RESOURCE_FOLDERS, GENOME_WALK_PATH, RNA_WALK_PATH
 from settings.resourceLinkRegex import RESOURCE_REGEX
@@ -181,7 +181,6 @@ class ncbiData:
 
         logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
 
-
     @updateResources
     def runGenomeWalk(self) -> None:
         """Run genomeWalk.py for this object. Download input gtf and genome files if they are not downloaded yet. Then create process
@@ -199,6 +198,22 @@ class ncbiData:
         p = Popen(command,stdout = PIPE)
         p.wait()
         logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.pid))
+        self.deleteResource("dna")
+        self.deleteResource("gtf")
+
+
+    @updateResources
+    def runPremrnaBlast(self) -> None:
+        """Run genomeWalk.py for this object. Download input gtf and genome files if they are not downloaded yet. Then create process
+        """
+        if not "gtf" in self.fileDirectories:
+            self.getResource("gtf")
+        if not "dna" in self.fileDirectories:
+            self.getResource("dna")
+
+        
+        experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["dna"], self.fileDirectories["gtf"])
+        experiment.runExperiment()
         self.deleteResource("dna")
         self.deleteResource("gtf")
 

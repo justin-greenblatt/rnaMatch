@@ -1,4 +1,3 @@
-
 """
 Developed for python3.9
 justingreeblatt@github | last updated 3/08/2022
@@ -24,11 +23,7 @@ from os.path import join
 logging.config.fileConfig(loggingConfigPath)
 logger = logging.getLogger(__name__)
 
-#Genome
-IN_FILE_GENOME = sys.argv[1]
 
-#GTF
-IN_FILE_GTF = sys.argv[2]
 
 class GenomeDict:
     """
@@ -43,7 +38,15 @@ class GenomeDict:
         self.genomeDict = SeqIO.index(genomeDirectorie, "fasta")
         self.keys = list(self.genomeDict.keys())
         self.chrom = self.genomeDict[self.keys[0]]
-     
+        self.genomeId = genomeDirectorie.split('/')[-1].rstrip(".fna")
+        self.dirDict = {
+            "preMrnaFolder" : join(dConfig["resources"]["pre_mrna_folder"], self.genomeId),
+            "genomeWalkTestFolder" : join(dConfig["resources"]["genome_walk_folder"], self.genomeId),
+            "genomeWalkControlFolder" : join(dConfig["resources"]["genome_walk_control_folder"], self.genomeId),
+            "blastDBFolder" : join(dConfig["resources"]["blast_db_folder"], self.genomeId),
+            "blastTestOutDir" : join(dConfig["resources"]["blast_test_out_folder"], self.genomeId),
+            "blastControlOutDir" : join(dConfig["resources"]["blast_control_out_folder"], self.genomeId)
+              }
 
     def extractSeq(self, geneStart : int, geneEnd : int) -> str:
         """
@@ -71,7 +74,7 @@ class GenomeDict:
                 return None
 
 
-class revBlastGene:
+class BlastGene:
 
     """
     A class to initiate a revBlast process and hold its directories. Contructer uses a gtf gene entrie.
@@ -82,23 +85,12 @@ class revBlastGene:
     """
 
     #Defining variables shared by instances. Folders and GenomeDict instance.
-    genomeId = IN_FILE_GENOME.split('/')[-1].rstrip(".fna")
-    genomeDict = GenomeDict(IN_FILE_GENOME)
-    dirDict = {
-            "preMrnaFolder" : join(dConfig["resources"]["pre_mrna_folder"], genomeId),
-            "genomeWalkTestFolder" : join(dConfig["resources"]["genome_walk_folder"], genomeId),
-            "genomeWalkControlFolder" : join(dConfig["resources"]["genome_walk_control_folder"], genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["blast_db_folder"], genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["blast_test_out_folder"], genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["blast_control_out_folder"], genomeId)
 
-              }
-
-    def __init__(self, gtfRecord):
-
+    def __init__(self, gtfRecord, genomeIn):
+        self.genomeIn = genomeIn
         self.gtfRecord = gtfRecord
         # checking if genome/species specific folders exist.
-        for d in self.__class__.dirDict.values():
+        for d in self.genomeIn.dirDict.values():
             if not os.path.isdir(d):
                 try:
                     os.mkdir(d)
@@ -113,19 +105,19 @@ class revBlastGene:
         self.geneStrand = gtfRecord.split('\t')[6]
         #print(f"initiating {self.geneId}") 
         #Define fasta file for extracted gene. If gene already exists. resolve name clash.
-        self.fastaFileDir = join(self.__class__.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
+        self.fastaFileDir = join(self.genomeIn.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
         if os.path.isfile(self.fastaFileDir):
             print(f"{self.geneId} already exists")
             copies = len(list([a for a in os.listdir(dConfig["resources"]["pre_mrna_folder"]) 
-                              if a.split('.')[0].startswith(geneId)]))
+                              if a.split('.')[0].startswith(self.geneId)]))
             self.geneId = "{}({})".format(self.geneId, copies)
-            self.fastaFileDir = join(self.__class__.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
+            self.fastaFileDir = join(self.genomeIn.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
         #Defining filenames and directories for species resources.
-        self.genomeWalkFileDir = join(self.__class__.dirDict["genomeWalkTestFolder"], f"{self.geneId}.csv")
-        self.genomeWalkControlFileDir = join(self.__class__.dirDict["genomeWalkControlFolder"], f"{self.geneId}_control.csv")
-        self.blastDBDir = join(self.__class__.dirDict["blastDBFolder"], f"{self.geneId}")
-        self.blastTestOutDir = join(self.__class__.dirDict["blastTestOutDir"], f"{self.geneId}")
-        self.blastControlOutDir =  join(self.__class__.dirDict["blastControlOutDir"], f"{self.geneId}")
+        self.genomeWalkFileDir = join(self.genomeIn.dirDict["genomeWalkTestFolder"], f"{self.geneId}.csv")
+        self.genomeWalkControlFileDir = join(self.genomeIn.dirDict["genomeWalkControlFolder"], f"{self.geneId}_control.csv")
+        self.blastDBDir = join(self.genomeIn.dirDict["blastDBFolder"], f"{self.geneId}")
+        self.blastTestOutDir = join(self.genomeIn.dirDict["blastTestOutDir"], f"{self.geneId}.xml")
+        self.blastControlOutDir =  join(self.genomeIn.dirDict["blastControlOutDir"], f"{self.geneId}.xml")
 
     def getBlastDBCommand(self) -> list[str]:
 
@@ -177,7 +169,7 @@ class revBlastGene:
         fastaHandler = open(self.fastaFileDir, 'w')
         fastaHeader = ">" + ",".join([self.geneId, self.chromId, str(self.geneStart), str(self.geneEnd), str(self.geneStrand)]) + "\n"
         fastaHandler.write(fastaHeader)
-        seq = self.__class__.genomeDict.getSeq(self.chromId, self.geneStart, self.geneEnd)
+        seq = self.genomeIn.getSeq(self.chromId, self.geneStart, self.geneEnd)
         fastaHandler.write(seq + '\n')
         fastaHandler.close()
 
@@ -210,7 +202,7 @@ class revBlastGene:
         to,te = self.revBlastProcess.communicate()
         co,ce = self.revBlastControlProcess.communicate()
  
-class RevBlastProcessStack:
+class BlastProcessStack:
 
     """
     A class for managing paralel processes of revBlast.
@@ -250,21 +242,25 @@ class RevBlastProcessStack:
         self.finished.extend(self.processes)
         self.processes = []
 
-def main():
-    #initiating stack
-    print("initializing stack")
-    rbStack = RevBlastProcessStack()
-    gtfHandler = open(IN_FILE_GTF,'r')
-    geneCount = 0
-    for line in gtfHandler:
-        if line.startswith('#') or line.split('\t')[2] not in pConfig["genomeWalk"]["GTF_KEYS"].split(','):
-            pass
-        else:
-            rbStack.add(revBlastGene(line))
-            geneCount += 1
-            #print(geneCount)
-    print(f"starting paralel processing of {geneCount} genes")
-    rbStack.execute()
+class PremrnaBlastExperiment:
+    def __init__(self, genomeDir : str, gtfDir : str):
 
-if __name__ == "__main__":
-    main()
+        self.genomeDict = GenomeDict(genomeDir)
+        self.gtfDirectorie = gtfDir
+        self.stack = BlastProcessStack()
+
+    def runExperiment(self):
+
+        print("initializing stack")
+        
+        gtfHandler = open(self.gtfDirectorie,'r')
+        geneCount = 0
+        for line in gtfHandler:
+            if line.startswith('#') or line.split('\t')[2] not in pConfig["genomeWalk"]["GTF_KEYS"].split(','):
+                pass
+            else:
+                self.stack.add(BlastGene(line, self.genomeDict))
+                geneCount += 1
+                #print(geneCount)
+        print(f"starting paralel processing of {geneCount} genes")
+        self.stack.execute()

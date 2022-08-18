@@ -11,5 +11,5 @@ if __name__ == "__main__":
     assemblieName = list(dummyData)[0]
     assemblieLinks = dummyData[assemblieName]
     platypus = ncbiData(assemblieName, assemblieLinks)
-    platypus.runGenomeWalk()
+    platypus.runPremrnaBlast()
        
