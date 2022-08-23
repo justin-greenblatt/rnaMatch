@@ -182,26 +182,6 @@ class ncbiData:
 
         logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
 
-    @updateResources
-    def runGenomeWalk(self) -> None:
-        """Run genomeWalk.py for this object. Download input gtf and genome files if they are not downloaded yet. Then create process
-        """
-        if not "gtf" in self.fileDirectories:
-            self.getResource("gtf")
-        if not "dna" in self.fileDirectories:
-            self.getResource("dna")
-
-        command = [pConfig["genomeWalk"]["interpreter"],
-                   dConfig["scripts"]["serial_genome_walk_path"],
-                   self.fileDirectories["dna"],
-                   self.fileDirectories["gtf"]]
-
-        p = Popen(command,stdout = PIPE)
-        p.wait()
-        logger.debug("Finished process genomeWalk: command id [{},{}]".format(command, p.pid))
-        self.deleteResource("dna")
-        self.deleteResource("gtf")
-
 
     @updateResources
     def runPremrnaBlast(self) -> None:
@@ -227,4 +207,20 @@ class ncbiData:
         experiment.runExperiment()
         self.deleteResource("mrna")
 
-
+    def genBlastReport(self, folderKey, outName):
+        bFiles = os.listdir(folderKey)
+        for b in bFiles:
+            blastResultsPath = join(folderKey, b)
+            blastData = list(BlastReader.parse(open(blastResultsPath)))
+            blastRecords = blast[0].alignments[0].hsps
+            for a in blastRecords:
+                summary += "{},{},{},{},{},{},{}\n".format(b.rstrip(".xml"),
+                                           a.query_start,
+                                           a.query_end,
+                                           a.sbjct_start,
+                                           a.sbjct_end,
+                                           len(a.match),
+                                           a.match.count("|")/len(a.match))
+            summaryOut = open(outName, 'a')
+            summaryOut.write(summary)
+            summaryOut.close()
