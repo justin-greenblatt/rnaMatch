@@ -10,6 +10,7 @@ from subprocess import Popen, PIPE
 from collections import Counter
 from os import chdir, getcwd, remove, listdir
 from os.path import join, isfile
+import xml.etree.ElementTree as xmlParser
 from requests import get
 from re import findall
 from random import choice
@@ -208,19 +209,26 @@ class ncbiData:
         self.deleteResource("mrna")
 
     def genBlastReport(self, folderKey, outName):
+
+        hspKeys = ['Hsp_num', 'Hsp_bit-score', 'Hsp_score', 'Hsp_evalue', 'Hsp_query-from',
+                   'Hsp_query-to', 'Hsp_hit-from', 'Hsp_hit-to', 'Hsp_identity',
+                   'Hsp_positive', 'Hsp_gaps', 'Hsp_align-len']
+
+
+        summaryOut = open(outName, 'w')
+        summaryOut.write("gene_id,chromossome,gene_start,gene_end,gene_strand,")
+        summaryOut.write(','.join(list([k.lower() for k in hspKeys])) + '\n')
+
         bFiles = os.listdir(folderKey)
+
         for b in bFiles:
             blastResultsPath = join(folderKey, b)
-            blastData = list(BlastReader.parse(open(blastResultsPath)))
-            blastRecords = blast[0].alignments[0].hsps
-            for a in blastRecords:
-                summary += "{},{},{},{},{},{},{}\n".format(b.rstrip(".xml"),
-                                           a.query_start,
-                                           a.query_end,
-                                           a.sbjct_start,
-                                           a.sbjct_end,
-                                           len(a.match),
-                                           a.match.count("|")/len(a.match))
-            summaryOut = open(outName, 'a')
-            summaryOut.write(summary)
-            summaryOut.close()
+            xmlHandler = xmlParser.parse(open(blastResultsPath)))
+            r = xmlData.getroot()
+            geneData = r.find("BlastOutput_query-def").text + ','
+            for hsp in r.iter("Hsp"):
+                hspData = ','.join(list([hsp.find(k).text for k in hspKeys]) + '/n'
+                summaryOut.write(geneData)
+                summaryOut.write(hspData)
+            xmlHandler.close()
+        summaryOut.close()
