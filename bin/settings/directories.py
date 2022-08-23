@@ -14,6 +14,7 @@ GENOME_WALK_CONTROL_FOLDER = join(DATA_PATH, "genomeWalkControl")
 RNA_WALK_FOLDER = join(DATA_PATH, "rnaWalk")
 RNA_WALK_CONTROL_FOLDER = join(DATA_PATH, "rnaWalkControl")
 REPEAT_MASK_FOLDER = join(DATA_PATH, "repeatMask")
+GFF_FOLDER = join(DATA_PATH, "gff")
 
 HISTOGRAMS_FOLDER = join(DATA_PATH, "histograms")
 HISTOGRAMS2D_FOLDER = join(DATA_PATH, "histograms2D")
@@ -53,6 +54,7 @@ DIRECTORIES_CONFIG = join(APLICATION_PATH, "bin", "settings", "directories.ini")
 RESOURCE_FOLDERS = {
             "dna" : GENOME_FOLDER,
             "gtf" : GTF_FOLDER,
+            "gff" : GFF_FOLDER,
             "mrna" : MRNA_FOLDER,
             "genomeWalk" : GENOME_WALK_FOLDER,
             "genomeWalkControl" : GENOME_WALK_CONTROL_FOLDER,

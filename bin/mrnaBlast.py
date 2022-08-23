@@ -25,56 +25,24 @@ logger = logging.getLogger(__name__)
 
 
 
-class GenomeDict:
-    """
-    A class for accessing a fasta genome. It envelops the biopython SeqIO and allows the program
-    to access a specific sequence of a chromossome through its getSeq() method. Its constructer
-    only needs a valid fasta genome directorie. At any time only one chromossome sequence is 
-    hold in memory.
-    """
-    def __init__(self, genomeDirectorie):
+class Parser:
+    def __init__(self, mrnaDirectorie):
 
-        self.genomeDirectorie = genomeDirectorie
-        self.genomeDict = SeqIO.index(genomeDirectorie, "fasta")
-        self.keys = list(self.genomeDict.keys())
-        self.chrom = self.genomeDict[self.keys[0]]
-        self.genomeId = genomeDirectorie.split('/')[-1].rstrip(".fna")
+        self.mrnaDirectorie = mrnaDirectorie
+        self.mrnaParser = SeqIO.parse(mrnaDirectorie, "fasta")
+        self.genomeId = mrnaDirectorie.split('/')[-1].rstrip(".gff")
         self.dirDict = {
-            "preMrnaFolder" : join(dConfig["resources"]["pre_mrna_folder"], self.genomeId),
-            "genomeWalkTestFolder" : join(dConfig["resources"]["genome_walk_folder"], self.genomeId),
-            "genomeWalkControlFolder" : join(dConfig["resources"]["genome_walk_control_folder"], self.genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["blast_db_folder"], self.genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["blast_test_out_folder"], self.genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["blast_control_out_folder"], self.genomeId)
+            "mrnaFolder" : join(dConfig["resources"]["mrna_folder"], self.genomeId),
+            "blastDBFolder" : join(dConfig["resources"]["mrna_blast_db_folder"], self.genomeId),
+            "blastTestOutDir" : join(dConfig["resources"]["mrna_blast_test_out_folder"], self.genomeId),
+            "blastControlOutDir" : join(dConfig["resources"]["mrna_blast_control_out_folder"], self.genomeId)
               }
 
-    def extractSeq(self, geneStart : int, geneEnd : int) -> str:
-        """
-        A helper function for extracting sequence out of the current chromossom hold in memory
-        """
-        return str(self.chrom.seq[max(0, geneStart - int(pConfig["genomeWalk"]["DOWNSTREAM_GENE_FLANK"])):min(geneEnd + int(pConfig["genomeWalk"]["UPSTREAM_GENE_FLANK"]), len(self.chrom.seq))])
 
+    def getMrna(self):
+        return next(self.mrnaParser, None)
 
-
-    def getSeq(self, chromId : str, geneStart : int, geneEnd: int) -> str:
-        """
-        Get a sequence for a specified chromossome while minimizing loading new chromossomes to memory
-        """
-        seqStart = min((geneStart, geneEnd))
-        seqEnd = max((geneStart, geneEnd))
-        if chromId == self.chrom.id:
-            return self.extractSeq(seqStart, seqEnd)
-        else:
-            if chromId in self.keys:
-                self.chrom = self.genomeDict[chromId]
-                print(f"switching to chromossome {chromId}")
-                return self.extractSeq(seqStart, seqEnd)
-            else:
-                print(f"chromossome {chromId} not in {self.genomeDirectorie}. skipping entrie") 
-                return None
-
-
-class BlastGene:
+class BlastMrna:
 
     """
     A class to initiate a revBlast process and hold its directories. Contructer uses a gtf gene entrie.
@@ -86,36 +54,27 @@ class BlastGene:
 
     #Defining variables shared by instances. Folders and GenomeDict instance.
 
-    def __init__(self, gtfRecord, genomeIn):
-        self.genomeIn = genomeIn
-        self.gtfRecord = gtfRecord
-        # checking if genome/species specific folders exist.
-        for d in self.genomeIn.dirDict.values():
-            if not os.path.isdir(d):
-                try:
-                    os.mkdir(d)
-                except:
-                    logging.error("File system corrupted or no permissions to create dir")
-                    sys.exit(1)
-        #extracting data from gtf entrie
-        self.geneId = re.search(r'gene_id \"(.+?)\"', gtfRecord).group(1)
-        self.chromId = gtfRecord.split('\t')[0]
-        self.geneStart = int(gtfRecord.split('\t')[3])
-        self.geneEnd = int(gtfRecord.split('\t')[4])
-        self.geneStrand = gtfRecord.split('\t')[6]
-        #print(f"initiating {self.geneId}") 
-        #Define fasta file for extracted gene. If gene already exists. resolve name clash.
-        self.fastaFileDir = join(self.genomeIn.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
+    def __init__(self, mrna, dirDict):
+        self.dirDict = dirDict
+        self.mrnaId = mrna.id
+        self.fastaFileDir = join(self.dirDict["mrnaFolder"], f"{self.mrnaId}.fa")
+
         if os.path.isfile(self.fastaFileDir):
-            print(f"{self.geneId} already exists")
-            copies = len(list([a for a in os.listdir(dConfig["resources"]["pre_mrna_folder"]) 
-                              if a.split('.')[0].startswith(self.geneId)]))
-            self.geneId = "{}({})".format(self.geneId, copies)
-            self.fastaFileDir = join(self.genomeIn.dirDict["preMrnaFolder"], f"{self.geneId}.fa")
+            print(f"{self.mrnaId} already exists")
+            copies = len(list([a for a in os.listdir(dConfig["resources"]["mrna_folder"]) 
+                              if a.split('.')[0].startswith(self.mrnaId)]))
+            self.mrnaId = "{}({})".format(self.mrnaId, copies)
+            self.fastaFileDir = join(self.dirDict["mrnaFolder"], f"{self.mrnaId}.fa")
+
         #Defining filenames and directories for species resources.
-        self.blastDBDir = join(self.genomeIn.dirDict["blastDBFolder"], f"{self.geneId}")
-        self.blastTestOutDir = join(self.genomeIn.dirDict["blastTestOutDir"], f"{self.geneId}.xml")
-        self.blastControlOutDir =  join(self.genomeIn.dirDict["blastControlOutDir"], f"{self.geneId}.xml")
+        self.blastDBDir = join(self.dirDict["blastDBFolder"], f"{self.mrnaId}")
+        self.blastTestOutDir = join(self.dirDict["blastTestOutDir"], f"{self.mrnaId}.xml")
+        self.blastControlOutDir =  join(self.dirDict["blastControlOutDir"], f"{self.mrnaId}.xml")
+        fastaHandler = open(self.fastaFileDir, 'w')
+        fastaHeader = ">" + self.mrnaId + "\n"
+        fastaHandler.write(fastaHeader)
+        fastaHandler.write(str(mrna.seq) + '\n')
+        fastaHandler.close()
 
     def getBlastDBCommand(self) -> list[str]:
 
@@ -157,22 +116,11 @@ class BlastGene:
                     pConfig["blastn"]["EXTRA_FLAGS"],
                     pConfig["blastn"]["EXTRA_FLAG_VALUE_PAIRS"]]
                     if a])
-
         
         return command
 
-    def createFiles(self):
- 
-        #write out fasta file of extracted sequence.
-        fastaHandler = open(self.fastaFileDir, 'w')
-        fastaHeader = ">" + ",".join([self.geneId, self.chromId, str(self.geneStart), str(self.geneEnd), str(self.geneStrand)]) + "\n"
-        fastaHandler.write(fastaHeader)
-        seq = self.genomeIn.getSeq(self.chromId, self.geneStart, self.geneEnd)
-        fastaHandler.write(seq + '\n')
-        fastaHandler.close()
-
     def run(self):
-        self.createFiles()
+
         self.createBlastDBProcess = Popen(self.getBlastDBCommand(), stdin = PIPE, stdout = PIPE)
         self.blastnStarted = False
 
@@ -230,7 +178,7 @@ class BlastProcessStack:
                     self.finished.append(oldP)
                     newP = self.stack.pop(0)
                     newP.run()
-                    print(f"{time.time()} removing {p.geneId} , adding {newP.geneId}")
+                    print(f"{time.time()} removing {p.mrnaId} , adding {newP.mrnaId}")
                     self.processes.append(newP)
             time.sleep(self.refreshTime)
         print("stack empty. finishing last processes")
@@ -239,25 +187,31 @@ class BlastProcessStack:
         self.finished.extend(self.processes)
         self.processes = []
 
-class PremrnaBlastExperiment:
-    def __init__(self, genomeDir : str, gtfDir : str):
-
-        self.genomeDict = GenomeDict(genomeDir)
-        self.gtfDirectorie = gtfDir
+class MrnaBlastExperiment:
+    def __init__(self, mrnaDir : str):
+        
         self.stack = BlastProcessStack()
+        self.mrnaParser = SeqIO.parse(mrnaDir, "fasta")
+        self.genomeId = mrnaDir.split('/')[-1].rstrip(".fna")
+        self.dirDict = {
+            "mrnaFolder" : join(dConfig["resources"]["mrna_genes_folder"], self.genomeId),
+            "blastDBFolder" : join(dConfig["resources"]["mrna_blast_db_folder"], self.genomeId),
+            "blastTestOutDir" : join(dConfig["resources"]["mrna_blast_test_out_folder"], self.genomeId),
+            "blastControlOutDir" : join(dConfig["resources"]["mrna_blast_control_out_folder"], self.genomeId)
+              }
+        for d in self.dirDict.values():
+            if not os.path.isdir(d):
+                os.mkdir(d)
 
     def runExperiment(self):
 
         print("initializing stack")
         
-        gtfHandler = open(self.gtfDirectorie,'r')
         geneCount = 0
-        for line in gtfHandler:
-            if line.startswith('#') or line.split('\t')[2] not in pConfig["genomeWalk"]["GTF_KEYS"].split(','):
-                pass
-            else:
-                self.stack.add(BlastGene(line, self.genomeDict))
-                geneCount += 1
-                #print(geneCount)
+        for s in self.mrnaParser:
+            
+            self.stack.add(BlastMrna(s, self.dirDict))
+            geneCount += 1
+            
         print(f"starting paralel processing of {geneCount} genes")
         self.stack.execute()

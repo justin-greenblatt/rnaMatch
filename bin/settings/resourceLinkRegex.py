@@ -2,6 +2,7 @@ RESOURCE_REGEX = {
         "dna" : r".*(?<!from)_genomic.fna.gz$",
         "mrna" : r".*rna_from_genomic.fna.gz$",
         "gtf" : r".*(?<!from)_genomic.gtf.gz$",
+        "gff" : r".*(?<!from)_genomic.gff.gz$",
         "annotationReport" : r".*annotation_report.xml$",
         "assemblyReport" : r".*assembly_report.txt$",
         "assemblyStats" : r".*assembly_stats.txt$",

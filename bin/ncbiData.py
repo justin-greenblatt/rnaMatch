@@ -32,6 +32,7 @@ import logging.config
 from myUtils import downloadFromURL, dictComparison
 from Histogram import Histogram, Histogram2d
 import premrnaBlast
+import mrnaBlast
 #My constants/parameters importS
 from settings.directories import  RESOURCE_FOLDERS, GENOME_WALK_PATH, RNA_WALK_PATH
 from settings.resourceLinkRegex import RESOURCE_REGEX
@@ -204,8 +205,6 @@ class ncbiData:
 
     @updateResources
     def runPremrnaBlast(self) -> None:
-        """Run genomeWalk.py for this object. Download input gtf and genome files if they are not downloaded yet. Then create process
-        """
         if not "gtf" in self.fileDirectories:
             self.getResource("gtf")
         if not "dna" in self.fileDirectories:
@@ -217,35 +216,15 @@ class ncbiData:
         self.deleteResource("dna")
         self.deleteResource("gtf")
 
-
     @updateResources
-    def runRnaWalk(self) -> None:
-        """
-           Run rnaWalk.py for this object. 
-           Download input gtf and rna files if they are not downloaded yet.
-           Then create process
-        """
-        logger.info("Running rnaWalk for {}|{}".format(self.assembly, self.species))
+    def runMrnaBlast(self) -> None:
 
-        blastOutFile = join(RESOURCE_FOLDERS["rnaWalk"], self.id + "_rnaWalk.csv")
-        blastControlOutFile = join(RESOURCE_FOLDERS["rnaWalkControl"], self.id + "_rnaWalkControl.csv")
+        if not "mrna" in self.fileDirectories:
+            self.getResource("mrna")
 
-        if not blastOutFile in self.fileDirectories:
+        
+        experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
+        experiment.runExperiment()
+        self.deleteResource("mrna")
 
-            if not "mrna" in self.fileDirectories:
-                self.getResource("mrna")
-            try:
-                 command = ["python3", RNA_WALK_PATH,
-                           self.fileDirectories["mrna"],
-                           blastOutFile,
-                           blastControlOutFile]
 
-                 p = Popen(command,stdout = PIPE)
-                 logger.debug("Starting process rnaWalk: command id [{},{}]".format(command, p.id))
-                 p.wait()
-                 logger.debug("Finished process rnaWalk: command id [{},{}]".format(command, p.id))
-                 self.deleteResource("mrna")
-                 self.deleteResource("gtfAnnotation")
-                
-            except:
-                 logger.error("failed to run rnaWalk for {}|{}".format(self.assembly, self.species))

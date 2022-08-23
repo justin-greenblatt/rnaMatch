@@ -23,5 +23,16 @@ class TestNcbiData:
         gtfDir = TestNcbiData.platypus.fileDirectories["gtf"]
         assert os.path.isfile(gtfDir)
 
+        TestNcbiData.platypus.getResource("mrna")
+        mrnaDir = TestNcbiData.platypus.fileDirectories["mrna"]
+        assert os.path.isfile(mrnaDir)
 
+        TestNcbiData.platypus.getResource("gff")
+        gffDir = TestNcbiData.platypus.fileDirectories["gff"]
+        assert os.path.isfile(gffDir)
+
+
+if __name__ == "__main__":
+    T = TestNcbiData()
+    T.test_ncbiData()
 
