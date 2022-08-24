@@ -35,7 +35,7 @@ from Histogram import Histogram, Histogram2d
 import premrnaBlast
 import mrnaBlast
 #My constants/parameters importS
-from settings.directories import  RESOURCE_FOLDERS, GENOME_WALK_PATH, RNA_WALK_PATH
+from settings.directories import  RESOURCE_FOLDERS
 from settings.resourceLinkRegex import RESOURCE_REGEX
 from settings import lConfigPath, dConfig, pConfig
 #Setting up Logging
@@ -50,16 +50,16 @@ def updateResources(func : Callable) -> Callable:
     #Function for looking up for a resource
     def getFile(slf, key : str) -> None:
         foundFlag = False
-        for f in listdir(RESOURCE_FOLDERS[key]):
+        for f in listdir(pConfig["resources"][key]):
             if slf.assembly in f:
-                slf.fileDirectories[key] = join(RESOURCE_FOLDERS[key],f)
+                slf.fileDirectories[key] = join(pConfig["resources"][key],f)
                 foundFlag = True
         if not foundFlag:
             slf.fileDirectories.pop(key,"none")
 
-    #find all resource described in RESOURCE_FOLDERS
+    #find all resource described in pConfig["resources"]
     def findResources(slf):
-        for k in RESOURCE_FOLDERS:
+        for k in pConfig["resources"]:
             getFile(slf,k)
 
     #decorator/wrapper magic
@@ -100,7 +100,7 @@ class ncbiData:
         This is a general function for downloading a file from the ncbi Ftp service
         """
         resourceRegex = RESOURCE_REGEX[resourceName]
-        outFolder = RESOURCE_FOLDERS[resourceName]
+        outFolder = pConfig["resources"][resourceName]
         logger.debug("Getting resource {} for {} and storing at {}".format(resourceName, self.id, outFolder))
         #Check if resource alreadu exists.
         if not resourceName in self.fileDirectories:
@@ -133,10 +133,58 @@ class ncbiData:
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
 
+   @updateResources
+    def runPremrnaBlast(self) -> None:
+        if not "gtf" in self.fileDirectories:
+            self.getResource("gtf")
+        if not "genome" in self.fileDirectories:
+            self.getResource("genome")
 
+        
+        experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["genome"], self.fileDirectories["gtf"])
+        experiment.runExperiment()
+        self.deleteResource("genome")
+        self.deleteResource("gtf")
+
+    @updateResources
+    def runMrnaBlast(self) -> None:
+
+        if not "mrna" in self.fileDirectories:
+            self.getResource("mrna")
+
+        
+        experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
+        experiment.runExperiment()
+        self.deleteResource("mrna")
+
+    def genBlastReport(self, folderKey, outName):
+
+        hspKeys = ['Hsp_num', 'Hsp_bit-score', 'Hsp_score', 'Hsp_evalue', 'Hsp_query-from',
+                   'Hsp_query-to', 'Hsp_hit-from', 'Hsp_hit-to', 'Hsp_identity',
+                   'Hsp_positive', 'Hsp_gaps', 'Hsp_align-len']
+
+
+        summaryOut = open(outName, 'w')
+        summaryOut.write("gene_id,chromossome,gene_start,gene_end,gene_strand,")
+        summaryOut.write(','.join(list([k.lower() for k in hspKeys])) + '\n')
+
+        bFiles = os.listdir(folderKey)
+
+        for b in bFiles:
+            blastResultsPath = join(folderKey, b)
+            xmlHandler = xmlParser.parse(open(blastResultsPath))
+            r = xmlData.getroot()
+            geneData = r.find("BlastOutput_query-def").text + ','
+            for hsp in r.iter("Hsp"):
+                hspData = ','.join(list([hsp.find(k).text for k in hspKeys])) + '/n'
+                summaryOut.write(geneData)
+                summaryOut.write(hspData)
+            xmlHandler.close()
+        summaryOut.close()
+
+    """
     def generateHistograms(self):
-        """Generate histograms of data associated to this object.
-        """
+        #Generate histograms of data associated to this object.
 
         logger.info("generating histograms for {}|{}".format(self.species, self.assembly))
 
@@ -183,52 +231,5 @@ class ncbiData:
 
         logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
 
-
-    @updateResources
-    def runPremrnaBlast(self) -> None:
-        if not "gtf" in self.fileDirectories:
-            self.getResource("gtf")
-        if not "dna" in self.fileDirectories:
-            self.getResource("dna")
-
-        
-        experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["dna"], self.fileDirectories["gtf"])
-        experiment.runExperiment()
-        self.deleteResource("dna")
-        self.deleteResource("gtf")
-
-    @updateResources
-    def runMrnaBlast(self) -> None:
-
-        if not "mrna" in self.fileDirectories:
-            self.getResource("mrna")
-
-        
-        experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
-        experiment.runExperiment()
-        self.deleteResource("mrna")
-
-    def genBlastReport(self, folderKey, outName):
-
-        hspKeys = ['Hsp_num', 'Hsp_bit-score', 'Hsp_score', 'Hsp_evalue', 'Hsp_query-from',
-                   'Hsp_query-to', 'Hsp_hit-from', 'Hsp_hit-to', 'Hsp_identity',
-                   'Hsp_positive', 'Hsp_gaps', 'Hsp_align-len']
-
-
-        summaryOut = open(outName, 'w')
-        summaryOut.write("gene_id,chromossome,gene_start,gene_end,gene_strand,")
-        summaryOut.write(','.join(list([k.lower() for k in hspKeys])) + '\n')
-
-        bFiles = os.listdir(folderKey)
-
-        for b in bFiles:
-            blastResultsPath = join(folderKey, b)
-            xmlHandler = xmlParser.parse(open(blastResultsPath)))
-            r = xmlData.getroot()
-            geneData = r.find("BlastOutput_query-def").text + ','
-            for hsp in r.iter("Hsp"):
-                hspData = ','.join(list([hsp.find(k).text for k in hspKeys]) + '/n'
-                summaryOut.write(geneData)
-                summaryOut.write(hspData)
-            xmlHandler.close()
-        summaryOut.close()
+    """
+ 

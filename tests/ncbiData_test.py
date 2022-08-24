@@ -15,8 +15,8 @@ class TestNcbiData:
 
     def test_ncbiData(self):
         assert TestNcbiData.platypus.id == TestNcbiData.assemblieName.replace('/','_')
-        TestNcbiData.platypus.getResource("dna")
-        genomeDir = TestNcbiData.platypus.fileDirectories["dna"]
+        TestNcbiData.platypus.getResource("genome")
+        genomeDir = TestNcbiData.platypus.fileDirectories["genome"]
         assert os.path.isfile(genomeDir)
 
         TestNcbiData.platypus.getResource("gtf")
@@ -26,10 +26,6 @@ class TestNcbiData:
         TestNcbiData.platypus.getResource("mrna")
         mrnaDir = TestNcbiData.platypus.fileDirectories["mrna"]
         assert os.path.isfile(mrnaDir)
-
-        TestNcbiData.platypus.getResource("gff")
-        gffDir = TestNcbiData.platypus.fileDirectories["gff"]
-        assert os.path.isfile(gffDir)
 
 
 if __name__ == "__main__":
