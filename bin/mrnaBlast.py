@@ -23,25 +23,6 @@ from os.path import join
 logging.config.fileConfig(loggingConfigPath)
 logger = logging.getLogger(__name__)
 
-
-
-class Parser:
-    def __init__(self, mrnaDirectorie):
-
-        self.mrnaDirectorie = mrnaDirectorie
-        self.mrnaParser = SeqIO.parse(mrnaDirectorie, "fasta")
-        self.genomeId = mrnaDirectorie.split('/')[-1].rstrip(".gff")
-        self.dirDict = {
-            "mrnaFolder" : join(dConfig["resources"]["mrna_folder"], self.genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["mrna_blast_db_folder"], self.genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["mrna_blast_test_out_folder"], self.genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["mrna_blast_control_out_folder"], self.genomeId)
-              }
-
-
-    def getMrna(self):
-        return next(self.mrnaParser, None)
-
 class BlastMrna:
 
     """
@@ -61,7 +42,7 @@ class BlastMrna:
 
         if os.path.isfile(self.fastaFileDir):
             print(f"{self.mrnaId} already exists")
-            copies = len(list([a for a in os.listdir(dConfig["resources"]["mrna_folder"]) 
+            copies = len(list([a for a in os.listdir(dConfig["resources"]["mrna"]) 
                               if a.split('.')[0].startswith(self.mrnaId)]))
             self.mrnaId = "{}({})".format(self.mrnaId, copies)
             self.fastaFileDir = join(self.dirDict["mrnaFolder"], f"{self.mrnaId}.fa")
@@ -153,8 +134,8 @@ class BlastProcessStack:
     A class for managing paralel processes of revBlast.
     """
     def __init__(self):
-        self.stackSize = int(pConfig["genomeWalk"]["MAX_PROCESSES"])
-        self.refreshTime = float(pConfig["genomeWalk"]["REFRESH_STACK_SEC"])
+        self.stackSize = int(pConfig["mrnaBlast"]["MAX_PROCESSES"])
+        self.refreshTime = float(pConfig["mrnaBlast"]["REFRESH_STACK_SEC"])
         self.stack = []
         self.processes = []
         self.finished = []
@@ -194,10 +175,10 @@ class MrnaBlastExperiment:
         self.mrnaParser = SeqIO.parse(mrnaDir, "fasta")
         self.genomeId = mrnaDir.split('/')[-1].rstrip(".fna")
         self.dirDict = {
-            "mrnaFolder" : join(dConfig["resources"]["mrna_genes_folder"], self.genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["mrna_blast_db_folder"], self.genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["mrna_blast_test_out_folder"], self.genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["mrna_blast_control_out_folder"], self.genomeId)
+            "mrnaFolder" : join(dConfig["resources"]["mrna_genes"], self.genomeId),
+            "blastDBFolder" : join(dConfig["resources"]["mrna_blast_db"], self.genomeId),
+            "blastTestOutDir" : join(dConfig["resources"]["mrna_blast_test_out"], self.genomeId),
+            "blastControlOutDir" : join(dConfig["resources"]["mrna_blast_control_out"], self.genomeId)
               }
         for d in self.dirDict.values():
             if not os.path.isdir(d):

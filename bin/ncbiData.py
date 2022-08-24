@@ -133,7 +133,7 @@ class ncbiData:
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
 
-   @updateResources
+    @updateResources
     def runPremrnaBlast(self) -> None:
         if not "gtf" in self.fileDirectories:
             self.getResource("gtf")

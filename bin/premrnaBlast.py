@@ -40,19 +40,17 @@ class GenomeDict:
         self.chrom = self.genomeDict[self.keys[0]]
         self.genomeId = genomeDirectorie.split('/')[-1].rstrip(".fna")
         self.dirDict = {
-            "preMrnaFolder" : join(dConfig["resources"]["pre_mrna_folder"], self.genomeId),
-            "genomeWalkTestFolder" : join(dConfig["resources"]["genome_walk_folder"], self.genomeId),
-            "genomeWalkControlFolder" : join(dConfig["resources"]["genome_walk_control_folder"], self.genomeId),
-            "blastDBFolder" : join(dConfig["resources"]["blast_db_folder"], self.genomeId),
-            "blastTestOutDir" : join(dConfig["resources"]["blast_test_out_folder"], self.genomeId),
-            "blastControlOutDir" : join(dConfig["resources"]["blast_control_out_folder"], self.genomeId)
-              }
+            "preMrnaFolder" : join(dConfig["resources"]["premrna"], self.genomeId),
+            "blastDBFolder" : join(dConfig["resources"]["premrna_blast_db"], self.genomeId),
+            "blastTestOutDir" : join(dConfig["resources"]["premrna_blast_test_out"], self.genomeId),
+            "blastControlOutDir" : join(dConfig["resources"]["premrna_blast_control_out"], self.genomeId)
+                       }
 
     def extractSeq(self, geneStart : int, geneEnd : int) -> str:
         """
         A helper function for extracting sequence out of the current chromossom hold in memory
         """
-        return str(self.chrom.seq[max(0, geneStart - int(pConfig["genomeWalk"]["DOWNSTREAM_GENE_FLANK"])):min(geneEnd + int(pConfig["genomeWalk"]["UPSTREAM_GENE_FLANK"]), len(self.chrom.seq))])
+        return str(self.chrom.seq[max(0, geneStart - int(pConfig["premrnaBlast"]["DOWNSTREAM_GENE_FLANK"])):min(geneEnd + int(pConfig["premrnaBlast"]["UPSTREAM_GENE_FLANK"]), len(self.chrom.seq))])
 
 
 
@@ -205,8 +203,8 @@ class BlastProcessStack:
     A class for managing paralel processes of revBlast.
     """
     def __init__(self):
-        self.stackSize = int(pConfig["genomeWalk"]["MAX_PROCESSES"])
-        self.refreshTime = float(pConfig["genomeWalk"]["REFRESH_STACK_SEC"])
+        self.stackSize = int(pConfig["premrnaBlast"]["MAX_PROCESSES"])
+        self.refreshTime = float(pConfig["premrnaBlast"]["REFRESH_STACK_SEC"])
         self.stack = []
         self.processes = []
         self.finished = []
@@ -253,7 +251,7 @@ class PremrnaBlastExperiment:
         gtfHandler = open(self.gtfDirectorie,'r')
         geneCount = 0
         for line in gtfHandler:
-            if line.startswith('#') or line.split('\t')[2] not in pConfig["genomeWalk"]["GTF_KEYS"].split(','):
+            if line.startswith('#') or line.split('\t')[2] not in pConfig["premrnaBlast"]["GTF_KEYS"].split(','):
                 pass
             else:
                 self.stack.add(BlastGene(line, self.genomeDict))
