@@ -50,16 +50,16 @@ def updateResources(func : Callable) -> Callable:
     #Function for looking up for a resource
     def getFile(slf, key : str) -> None:
         foundFlag = False
-        for f in listdir(pConfig["resources"][key]):
+        for f in listdir(dConfig["resources"][key]):
             if slf.assembly in f:
-                slf.fileDirectories[key] = join(pConfig["resources"][key],f)
+                slf.fileDirectories[key] = join(dConfig["resources"][key],f)
                 foundFlag = True
         if not foundFlag:
             slf.fileDirectories.pop(key,"none")
 
-    #find all resource described in pConfig["resources"]
+    #find all resource described in dConfig["resources"]
     def findResources(slf):
-        for k in pConfig["resources"]:
+        for k in dConfig["resources"]:
             getFile(slf,k)
 
     #decorator/wrapper magic
@@ -100,7 +100,7 @@ class ncbiData:
         This is a general function for downloading a file from the ncbi Ftp service
         """
         resourceRegex = RESOURCE_REGEX[resourceName]
-        outFolder = pConfig["resources"][resourceName]
+        outFolder = dConfig["resources"][resourceName]
         logger.debug("Getting resource {} for {} and storing at {}".format(resourceName, self.id, outFolder))
         #Check if resource alreadu exists.
         if not resourceName in self.fileDirectories:
@@ -134,29 +134,6 @@ class ncbiData:
         remove(self.fileDirectories[resourceName])
 
     @updateResources
-    def runPremrnaBlast(self) -> None:
-        if not "gtf" in self.fileDirectories:
-            self.getResource("gtf")
-        if not "genome" in self.fileDirectories:
-            self.getResource("genome")
-
-        
-        experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["genome"], self.fileDirectories["gtf"])
-        experiment.runExperiment()
-        self.deleteResource("genome")
-        self.deleteResource("gtf")
-
-    @updateResources
-    def runMrnaBlast(self) -> None:
-
-        if not "mrna" in self.fileDirectories:
-            self.getResource("mrna")
-
-        
-        experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
-        experiment.runExperiment()
-        self.deleteResource("mrna")
-
     def genBlastReport(self, folderKey, outName):
 
         hspKeys = ['Hsp_num', 'Hsp_bit-score', 'Hsp_score', 'Hsp_evalue', 'Hsp_query-from',
@@ -168,20 +145,48 @@ class ncbiData:
         summaryOut.write("gene_id,chromossome,gene_start,gene_end,gene_strand,")
         summaryOut.write(','.join(list([k.lower() for k in hspKeys])) + '\n')
 
-        bFiles = os.listdir(folderKey)
+        bFiles = listdir(self.fileDirectories[folderKey])
 
         for b in bFiles:
-            blastResultsPath = join(folderKey, b)
-            xmlHandler = xmlParser.parse(open(blastResultsPath))
+            blastResultsPath = join(self.fileDirectories[folderKey], b)
+            xmlHandler = open(blastResultsPath)
+            xmlData = xmlParser.parse(xmlHandler)
             r = xmlData.getroot()
             geneData = r.find("BlastOutput_query-def").text + ','
             for hsp in r.iter("Hsp"):
-                hspData = ','.join(list([hsp.find(k).text for k in hspKeys])) + '/n'
+                hspData = ','.join(list([hsp.find(k).text for k in hspKeys])) + '\n'
                 summaryOut.write(geneData)
                 summaryOut.write(hspData)
             xmlHandler.close()
         summaryOut.close()
 
+    @updateResources
+    def runPremrnaBlast(self) -> None:
+        if not "gtf" in self.fileDirectories:
+            self.getResource("gtf")
+        if not "genome" in self.fileDirectories:
+            self.getResource("genome")
+
+        
+        experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["genome"], self.fileDirectories["gtf"])
+        experiment.runExperiment()
+        self.deleteResource("genome")
+        self.deleteResource("gtf")
+        self.genBlastReport("premrna_blast_test_out", join(dConfig["resources"]["premrna_blast_test_out_summary"],self.id + ".csv"))
+        self.genBlastReport("premrna_blast_control_out", join(dConfig["resources"]["premrna_blast_control_out_summary"],self.id + ".csv"))
+ 
+    @updateResources
+    def runMrnaBlast(self) -> None:
+
+        if not "mrna" in self.fileDirectories:
+            self.getResource("mrna")
+
+        
+        experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
+        experiment.runExperiment()
+        self.deleteResource("mrna")
+        self.genBlastReport("mrna_blast_test_out", join(dConfig["resources"]["mrna_blast_test_out_summary"],self.id + ".csv"))
+        self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
     """
     def generateHistograms(self):
         #Generate histograms of data associated to this object.
