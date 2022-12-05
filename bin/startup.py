@@ -23,18 +23,12 @@ for p in sConfig["apt"].values():
 for q in sConfig["pip"].values():
     runCommand(["sudo", "pip3", "install", q, "--no-input"])
 
-#formatDisk
-formatDiskCommand = ["sudo", "mkfs.ext4", "-m", "0", "-E", "lazy_itable_init=0,lazy_journal_init=0,discard", "/dev/sdb"]
-runCommand(formatDiskCommand)
-
-print("-----formatedDisk-----")
-
 def createDir(dirName):
     if not os.path.isdir(dirName):
         os.mkdir(dirName)
 
 createDir(dConfig["common"]["data_path"])
-mountDiskCommand = ["sudo", "mount", "-o", "discard,defaults", "/dev/sdb", dConfig["common"]["data_path"]]
+mountDiskCommand = ["sudo", sConfig["nfs"]["IP"], dConfig["common"]["out_path"]]
 runCommand(mountDiskCommand)
 
 print("-----mounted disk-----")
@@ -45,5 +39,8 @@ for f in dConfig["resourceFolders"].values():
 for d in dConfig["resources"].values():
     createDir(d)
     print("---created directorie : "+d)
+
 runCommand(["chmod", "-R", "777", dConfig["common"]["data_path"]])
 print("Giving free permissions to data folder")
+runCommand(["chmod", "-R", "777", dConfig["common"]["out_path"]])
+print("Giving free permissions to mount folder")
