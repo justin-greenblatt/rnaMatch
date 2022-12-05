@@ -27,8 +27,9 @@ def createDir(dirName):
     if not os.path.isdir(dirName):
         os.mkdir(dirName)
 
+createDir(dConfig["common"]["out_path"])
 createDir(dConfig["common"]["data_path"])
-mountDiskCommand = ["sudo", sConfig["nfs"]["IP"], dConfig["common"]["out_path"]]
+mountDiskCommand = ["sudo", "mount", sConfig["nfs"]["IP"], dConfig["common"]["out_path"]]
 runCommand(mountDiskCommand)
 
 print("-----mounted disk-----")
