@@ -187,7 +187,13 @@ class ncbiData:
         self.deleteResource("mrna")
         self.genBlastReport("mrna_blast_test_out", join(dConfig["resources"]["mrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
-    """
+
+    @updateResources
+    def migrate(self):
+        for k in self.fileDirectories:
+            p = Popen(["mv", self.fileDirectories[k], dConfig["nfs"][k]])
+            p.wait()
+"""
     def generateHistograms(self):
         #Generate histograms of data associated to this object.
 
@@ -235,6 +241,5 @@ class ncbiData:
             logger.warning("No repeatMask for {}|{}".format(self.species, self.assembly))
 
         logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
-
-    """
+"""
  
