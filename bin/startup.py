@@ -30,18 +30,18 @@ def createDir(dirName):
 createDir(dConfig["common"]["out_path"])
 createDir(dConfig["common"]["data_path"])
 mountDiskCommand = ["sudo", "mount", sConfig["nfs"]["IP"], dConfig["common"]["out_path"]]
-runCommand(mountDiskCommand)
-
+c = runCommand(mountDiskCommand)
+print(c)
 print("-----mounted disk-----")
-for f in dConfig["resourceFolders"].values():
-    createDir(f)
-    print("---created directorie : "+f)
+#for f in dConfig["resourceFolders"].values():
+#    createDir(f)
+#print("---created directorie : "+f)
 
-for d in dConfig["resources"].values():
-    createDir(d)
-    print("---created directorie : "+d)
+#for d in dConfig["resources"].values():
+#    createDir(d)
+#print("---created directorie : "+d)
 
-runCommand(["chmod", "-R", "777", dConfig["common"]["data_path"]])
-print("Giving free permissions to data folder")
-runCommand(["chmod", "-R", "777", dConfig["common"]["out_path"]])
-print("Giving free permissions to mount folder")
+#runCommand(["chmod", "-R", "777", dConfig["common"]["data_path"]])
+#print("Giving free permissions to data folder")
+#runCommand(["chmod", "-R", "777", dConfig["common"]["out_path"]])
+#print("Giving free permissions to mount folder")

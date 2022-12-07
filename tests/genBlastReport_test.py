@@ -1,7 +1,6 @@
 import sys, os, json
 sys.path.insert(1, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
 from ncbiData import ncbiData
-import pytest
 from settings.directories import NCBI_DUMMY_DATA
 import logging
 from settings import dConfig
@@ -29,7 +28,7 @@ class TestNcbiData:
         assert os.path.isfile(mrnaDir)
 
     def test_genBlastReport(self):
-        TestNcbiData.platypus.genBlastReport("premrna_blast_test_out", dConfig["resources"]["premrna_blast_test_out_summary"] + "/test.csv")
+        TestNcbiData.platypus.genBlastReport("mrna_blast_test_out", dConfig["resources"]["premrna_blast_test_out_summary"] + "/test.csv")
 if __name__ == "__main__":
     T = TestNcbiData()
     T.test_genBlastReport()
