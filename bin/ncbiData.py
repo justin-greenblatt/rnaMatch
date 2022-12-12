@@ -74,6 +74,27 @@ def updateResources(func : Callable) -> Callable:
 
     return wrapper
 
+def migrate(func : Callable) -> Callable:
+    """
+    Decorator for moving new files and folders generated to the shared nfs memmory
+    """
+    #Function for looking up for a resource
+    #decorator/wrapper magic
+    def wrapper(slf, *args, **kwargs):
+
+        func(slf, *args, **kwargs)
+
+        for k in slf.fileDirectories:
+            originDir = slf.fileDirectories[k]
+            destDir = os.path.join(dConfig["nfs"][k], slf.fileDirectories[k].split('/')[-1])
+
+            if not (os.path.isdir(destDir) or os.path.isfile(destDir)):
+                p = Popen(["mv", originDir, destDir])
+                p.wait()
+                logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
+
+    return wrapper
+
 
 class ncbiData:
 
@@ -93,7 +114,7 @@ class ncbiData:
         #find All resources. The lambda funcion is a dummy function to trick the wrapper into doing its work
         updateResources(lambda : 1 -1)
 
-
+    @migrate
     @updateResources
     def getResource(self, resourceName : str) -> None:
         """
@@ -190,9 +211,15 @@ class ncbiData:
 
     @updateResources
     def migrate(self):
+
         for k in self.fileDirectories:
-            p = Popen(["mv", self.fileDirectories[k], dConfig["nfs"][k]])
-            p.wait()
+            originDir = self.fileDirectories[k]
+            destDir = os.path.join(dConfig["nfs"][k], self.fileDirectories[k].split('/')[-1])
+
+            if not (os.path.isdir(destDir) or os.path.isfile(destDir)):
+                print(f"migrating {originDir} to {destDir}")
+                p = Popen(["mv", originDir, destDir])
+                p.wait()
 """
     def generateHistograms(self):
         #Generate histograms of data associated to this object.
