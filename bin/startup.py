@@ -25,23 +25,17 @@ for q in sConfig["pip"].values():
 
 def createDir(dirName):
     if not os.path.isdir(dirName):
-        os.mkdir(dirName)
+        os.mkdir(dirName)       
+        runCommand(["chmod", "-R", "777", dirName])
 
 createDir(dConfig["common"]["out_path"])
 createDir(dConfig["common"]["data_path"])
-mountDiskCommand = ["sudo", "mount", sConfig["nfs"]["IP"], dConfig["common"]["out_path"]]
+mountDiskCommand = ["sudo", "mount", sConfig["nfs"]["IP"], dConfig["common"]["nfs_path"]]
 c = runCommand(mountDiskCommand)
 print(c)
-print("-----mounted disk-----")
-#for f in dConfig["resourceFolders"].values():
-#    createDir(f)
-#print("---created directorie : "+f)
+for f in dConfig["resourceFolders"].values():
+    createDir(f)
 
-#for d in dConfig["resources"].values():
-#    createDir(d)
-#print("---created directorie : "+d)
+for d in dConfig["resources"].values():
+    createDir(d)
 
-#runCommand(["chmod", "-R", "777", dConfig["common"]["data_path"]])
-#print("Giving free permissions to data folder")
-#runCommand(["chmod", "-R", "777", dConfig["common"]["out_path"]])
-#print("Giving free permissions to mount folder")

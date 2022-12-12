@@ -1,0 +1,13 @@
+2022-12-07 13:14:23,695 - ncbiData - INFO - Creating ncbiData object for Anas_platyrhynchos/GCF_015476345.1_ZJU1.0/
+Traceback (most recent call last):
+  File "/home/a2iediting/blastWeb/tests/ncbiData_test.py", line 32, in <module>
+    T.test_ncbiData()
+  File "/home/a2iediting/blastWeb/tests/ncbiData_test.py", line 17, in test_ncbiData
+    TestNcbiData.platypus.getResource("genome")
+  File "/home/a2iediting/blastWeb/bin/ncbiData.py", line 68, in wrapper
+    findResources(slf)
+  File "/home/a2iediting/blastWeb/bin/ncbiData.py", line 63, in findResources
+    getFile(slf,k)
+  File "/home/a2iediting/blastWeb/bin/ncbiData.py", line 53, in getFile
+    for f in listdir(dConfig["resources"][key]):
+FileNotFoundError: [Errno 2] No such file or directory: '/home/a2iediting/data/histograms2D'
