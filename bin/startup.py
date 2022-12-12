@@ -28,7 +28,7 @@ def createDir(dirName):
         os.mkdir(dirName)       
         runCommand(["chmod", "-R", "777", dirName])
 
-createDir(dConfig["common"]["out_path"])
+createDir(dConfig["common"]["nfs_path"])
 createDir(dConfig["common"]["data_path"])
 mountDiskCommand = ["sudo", "mount", sConfig["nfs"]["IP"], dConfig["common"]["nfs_path"]]
 c = runCommand(mountDiskCommand)
@@ -38,4 +38,7 @@ for f in dConfig["resourceFolders"].values():
 
 for d in dConfig["resources"].values():
     createDir(d)
+
+for n in dConfig["nfs"].values():
+    createDir(n)
 

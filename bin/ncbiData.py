@@ -9,7 +9,7 @@ import gzip
 from subprocess import Popen, PIPE
 from collections import Counter
 from os import chdir, getcwd, remove, listdir
-from os.path import join, isfile
+from os.path import join, isfile, isdir
 import xml.etree.ElementTree as xmlParser
 from requests import get
 from re import findall
@@ -86,10 +86,10 @@ def migrate(func : Callable) -> Callable:
 
         for k in slf.fileDirectories:
             originDir = slf.fileDirectories[k]
-            destDir = os.path.join(dConfig["nfs"][k], slf.fileDirectories[k].split('/')[-1])
+            destDir = join(dConfig["nfs"][k], slf.fileDirectories[k].split('/')[-1])
 
-            if not (os.path.isdir(destDir) or os.path.isfile(destDir)):
-                p = Popen(["mv", originDir, destDir])
+            if not (isdir(destDir) or isfile(destDir)):
+                p = Popen(["cp", originDir, destDir])
                 p.wait()
                 logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
 
@@ -153,7 +153,7 @@ class ncbiData:
     @updateResources
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
-
+    @migrate
     @updateResources
     def genBlastReport(self, folderKey, outName):
 
@@ -180,7 +180,7 @@ class ncbiData:
                 summaryOut.write(hspData)
             xmlHandler.close()
         summaryOut.close()
-
+    @migrate
     @updateResources
     def runPremrnaBlast(self) -> None:
         if not "gtf" in self.fileDirectories:
@@ -195,7 +195,7 @@ class ncbiData:
         self.deleteResource("gtf")
         self.genBlastReport("premrna_blast_test_out", join(dConfig["resources"]["premrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("premrna_blast_control_out", join(dConfig["resources"]["premrna_blast_control_out_summary"],self.id + ".csv"))
- 
+    @migrate 
     @updateResources
     def runMrnaBlast(self) -> None:
 
@@ -208,7 +208,7 @@ class ncbiData:
         self.deleteResource("mrna")
         self.genBlastReport("mrna_blast_test_out", join(dConfig["resources"]["mrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
-
+    @migrate
     @updateResources
     def migrate(self):
 
