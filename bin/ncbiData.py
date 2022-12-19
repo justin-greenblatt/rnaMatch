@@ -83,13 +83,13 @@ def migrate(func : Callable) -> Callable:
     def wrapper(slf, *args, **kwargs):
 
         func(slf, *args, **kwargs)
-
+        print("--------------MIGRATING--------------")
         for k in slf.fileDirectories:
             originDir = slf.fileDirectories[k]
-            destDir = join(dConfig["nfs"][k], slf.fileDirectories[k].split('/')[-1])
+            destDir = join(dConfig["nfs"][k], originDir.split('/')[-1])
 
-            if not (isdir(destDir) or isfile(destDir)):
-                p = Popen(["cp", originDir, destDir])
+            if (not (isdir(destDir) or isfile(destDir))):
+                p = Popen(["cp", "-r", originDir, destDir])
                 p.wait()
                 logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
 
@@ -103,8 +103,10 @@ class ncbiData:
         """
         Look for any resources from this assembly present in storage.
         """
+        print(assembly.split('/'))
+        self.species = assembly.split('/')[-3]
+        self.assembly = assembly.split('/')[-2]
 
-        self.species, self.assembly = assembly.split('/')[:2]
         self.links = linkDict
         self.fileDirectories = {}
         self.id = assembly.replace("/","_")
@@ -114,8 +116,9 @@ class ncbiData:
         #find All resources. The lambda funcion is a dummy function to trick the wrapper into doing its work
         updateResources(lambda : 1 -1)
 
-    @migrate
+
     @updateResources
+    @migrate
     def getResource(self, resourceName : str) -> None:
         """
         This is a general function for downloading a file from the ncbi Ftp service
@@ -153,6 +156,7 @@ class ncbiData:
     @updateResources
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
+
     @migrate
     @updateResources
     def genBlastReport(self, folderKey, outName):
@@ -180,6 +184,7 @@ class ncbiData:
                 summaryOut.write(hspData)
             xmlHandler.close()
         summaryOut.close()
+
     @migrate
     @updateResources
     def runPremrnaBlast(self) -> None:
@@ -191,10 +196,9 @@ class ncbiData:
         
         experiment = premrnaBlast.PremrnaBlastExperiment(self.fileDirectories["genome"], self.fileDirectories["gtf"])
         experiment.runExperiment()
-        self.deleteResource("genome")
-        self.deleteResource("gtf")
         self.genBlastReport("premrna_blast_test_out", join(dConfig["resources"]["premrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("premrna_blast_control_out", join(dConfig["resources"]["premrna_blast_control_out_summary"],self.id + ".csv"))
+
     @migrate 
     @updateResources
     def runMrnaBlast(self) -> None:
@@ -205,21 +209,10 @@ class ncbiData:
         
         experiment = mrnaBlast.MrnaBlastExperiment(self.fileDirectories["mrna"])
         experiment.runExperiment()
-        self.deleteResource("mrna")
         self.genBlastReport("mrna_blast_test_out", join(dConfig["resources"]["mrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
-    @migrate
-    @updateResources
-    def migrate(self):
+        
 
-        for k in self.fileDirectories:
-            originDir = self.fileDirectories[k]
-            destDir = os.path.join(dConfig["nfs"][k], self.fileDirectories[k].split('/')[-1])
-
-            if not (os.path.isdir(destDir) or os.path.isfile(destDir)):
-                print(f"migrating {originDir} to {destDir}")
-                p = Popen(["mv", originDir, destDir])
-                p.wait()
 """
     def generateHistograms(self):
         #Generate histograms of data associated to this object.

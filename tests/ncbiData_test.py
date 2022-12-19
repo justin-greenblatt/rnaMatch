@@ -28,6 +28,10 @@ class TestNcbiData:
 
 
 if __name__ == "__main__":
-    T = TestNcbiData()
-    T.test_ncbiData()
+    T = TestNcbiData.platypus
+    T.getResource("gtf")
+    print(f"assembly {T.assembly}")
+    print(f"species {T.species}")
+    print(f"id {T.id}")
+    print(f"fileDirectorie {T.fileDirectories}")
 

@@ -9,29 +9,28 @@ import re, requests, json
 from time import strftime ,time
 import logging
 
-from settings.logs import TIME, NCBI_SCRAPE_LOG_PATH, NCBI_SCRAPE_LOG_LEVEL
 from settings.links import NCBI_LINK_START, NCBI_LINK_END, NCBI_EUKARYOTS
 
 def getSpeciesLinks():
 
     #setting up logging
-    logging.basicConfig(filename=NCBI_SCRAPE_LOG_PATH, level = NCBI_SCRAPE_LOG_LEVEL)
+    #logging.basicConfig(filename=NCBI_SCRAPE_LOG_PATH, level = NCBI_SCRAPE_LOG_LEVEL)
     #dissable warnings
     requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
-    logging.info("Starting webScrape of ncbi ftp. time = {}".format(TIME()))
+    #logging.info("Starting webScrape of ncbi ftp. time = {}".format(TIME()))
 
     def getLinks(link):
         #Util function for extracting all links from an hml response. Used extensively in the list comprehension to follow.
         t0 = time()
-        logging.debug("Get request to {} - time: {}".format(link,TIME()))
+        #logging.debug("Get request to {} - time: {}".format(link,TIME()))
         linksFound = re.findall(r'href=\"(.*?)\"', requests.get(link, verify = False).text)
-        logging.debug("request took {} seconds".format(round(time() - t0),1))
+        #logging.debug("request took {} seconds".format(round(time() - t0),1))
         return linksFound
 
     #Find All eukaryot species in ncbi refseq
     links = dict({e :list([ a.strip('/') for a in getLinks(join(NCBI_LINK_START, e)) if a.endswith('/') and not a.startswith('/')]) for e in NCBI_EUKARYOTS})
-    logging.info("Found assemblies for the following groups:{}".format(str(dict({a:len(b) for a,b in links.items()}))))
+    #logging.info("Found assemblies for the following groups:{}".format(str(dict({a:len(b) for a,b in links.items()}))))
  
     #Annotation Release Links
     arl = {a: {b: getLinks(join(NCBI_LINK_START,a,b,NCBI_LINK_END)) for b in links[a]} for a in links}
@@ -47,10 +46,10 @@ def getSpeciesLinks():
     return newLinks
 
 #Test for this unit
-"""
+
 if __name__ == "__main__":
     print("Downloading Links")
     h = open("ncbiLinks.json",'w')
     l = dict(getSpeciesLinks())
     json.dump(l,h, indent = 2)
-"""
+
