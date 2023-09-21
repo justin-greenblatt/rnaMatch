@@ -23,14 +23,14 @@ def getSpeciesLinks():
     def getLinks(link):
         #Util function for extracting all links from an hml response. Used extensively in the list comprehension to follow.
         t0 = time()
-        #logging.debug("Get request to {} - time: {}".format(link,TIME()))
+        print("Get request to {} ".format(link))
         linksFound = re.findall(r'href=\"(.*?)\"', requests.get(link, verify = False).text)
-        #logging.debug("request took {} seconds".format(round(time() - t0),1))
+        print("request took {} seconds".format(round(time() - t0),1))
         return linksFound
 
     #Find All eukaryot species in ncbi refseq
     links = dict({e :list([ a.strip('/') for a in getLinks(join(NCBI_LINK_START, e)) if a.endswith('/') and not a.startswith('/')]) for e in NCBI_EUKARYOTS})
-    #logging.info("Found assemblies for the following groups:{}".format(str(dict({a:len(b) for a,b in links.items()}))))
+    print("Found assemblies for the following groups:{}".format(str(dict({a:len(b) for a,b in links.items()}))))
  
     #Annotation Release Links
     arl = {a: {b: getLinks(join(NCBI_LINK_START,a,b,NCBI_LINK_END)) for b in links[a]} for a in links}

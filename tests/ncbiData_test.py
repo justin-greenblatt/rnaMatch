@@ -7,10 +7,7 @@ import logging
 class TestNcbiData:
 
     
-    dummyData = json.load(open(NCBI_DUMMY_DATA))
-    assemblieName = list(dummyData)[0]
-    assemblieLinks = dummyData[assemblieName]
-    platypus = ncbiData(assemblieName, assemblieLinks)
+    platypus = ncbiData("/home/a2iediting/blastWeb/tests/Anas_platyrhynchos-GCF_015476345.1_ZJU1.0.json")
 
     def test_ncbiData(self):
         assert TestNcbiData.platypus.id == TestNcbiData.assemblieName.replace('/','_')

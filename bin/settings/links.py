@@ -24,7 +24,7 @@ ENSEMBL_LINK_TYPES = (
 #NCBI DATA LINKS
 
 NCBI_LINK_START = "https://ftp.ncbi.nih.gov/genomes/refseq"
-NCBI_LINK_END = "annotation_releases/current"
+NCBI_LINK_END = "latest_assembly_versions"
 NCBI_EUKARYOTS = ["vertebrate_mammalian",
                   "vertebrate_other",
                   "invertebrate",

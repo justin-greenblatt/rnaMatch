@@ -98,19 +98,20 @@ def migrate(func : Callable) -> Callable:
 
 class ncbiData:
 
-    def __init__(self, assembly : str, linkDict : Dict[str,str]):
+    def __init__(self, linksDir):
 
         """
         Look for any resources from this assembly present in storage.
         """
-        print(assembly.split('/'))
-        self.species = assembly.split('/')[-3]
-        self.assembly = assembly.split('/')[-2]
-
-        self.links = linkDict
+        linksFile = linksDir.split('/')[-1]
+        self.species = linksFile.split('-')[0]
+        self.id = linksFile.rstrip(".json")
+        self.assembly = self.id.lstrip(self.species + '-')
+        fileHandler = open(linksDir)
+        self.links = json.load(fileHandler)
+        fileHandler.close()
         self.fileDirectories = {}
-        self.id = assembly.replace("/","_")
-        logger.info("Creating ncbiData object for {}".format(assembly))
+        logger.info("Creating ncbiData object for {}".format(self.assembly))
 
 
         #find All resources. The lambda funcion is a dummy function to trick the wrapper into doing its work
@@ -118,7 +119,7 @@ class ncbiData:
 
 
     @updateResources
-    @migrate
+    #@migrate
     def getResource(self, resourceName : str) -> None:
         """
         This is a general function for downloading a file from the ncbi Ftp service
@@ -157,7 +158,7 @@ class ncbiData:
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
 
-    @migrate
+    #@migrate
     @updateResources
     def genBlastReport(self, folderKey, outName):
 
@@ -199,7 +200,7 @@ class ncbiData:
         self.genBlastReport("premrna_blast_test_out", join(dConfig["resources"]["premrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("premrna_blast_control_out", join(dConfig["resources"]["premrna_blast_control_out_summary"],self.id + ".csv"))
 
-    @migrate 
+    #@migrate 
     @updateResources
     def runMrnaBlast(self) -> None:
 
@@ -213,7 +214,7 @@ class ncbiData:
         self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
         
 
-"""
+
     def generateHistograms(self):
         #Generate histograms of data associated to this object.
 
@@ -261,5 +262,3 @@ class ncbiData:
             logger.warning("No repeatMask for {}|{}".format(self.species, self.assembly))
 
         logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
-"""
- 
