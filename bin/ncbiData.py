@@ -86,10 +86,10 @@ def migrate(func : Callable) -> Callable:
         print("--------------MIGRATING--------------")
         for k in slf.fileDirectories:
             originDir = slf.fileDirectories[k]
-            destDir = join(dConfig["nfs"][k], originDir.split('/')[-1])
+            destDir = join(dConfig["cloud"][k], originDir.split('/')[-1])
 
             if (not (isdir(destDir) or isfile(destDir))):
-                p = Popen(["cp", "-r", originDir, destDir])
+                p = Popen(["gsutil", "cp", "-r", originDir, destDir])
                 p.wait()
                 logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
 
@@ -158,7 +158,7 @@ class ncbiData:
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
 
-    #@migrate
+    @migrate
     @updateResources
     def genBlastReport(self, folderKey, outName):
 
