@@ -186,7 +186,7 @@ class ncbiData:
             xmlHandler.close()
         summaryOut.close()
 
-    @migrate
+    #@migrate
     @updateResources
     def runPremrnaBlast(self) -> None:
         if not "gtf" in self.fileDirectories:
@@ -212,53 +212,3 @@ class ncbiData:
         experiment.runExperiment()
         self.genBlastReport("mrna_blast_test_out", join(dConfig["resources"]["mrna_blast_test_out_summary"],self.id + ".csv"))
         self.genBlastReport("mrna_blast_control_out", join(dConfig["resources"]["mrna_blast_control_out_summary"],self.id + ".csv"))
-        
-
-
-    def generateHistograms(self):
-        #Generate histograms of data associated to this object.
-
-        logger.info("generating histograms for {}|{}".format(self.species, self.assembly))
-
-        self.histograms = {}
-        self.histograms2d = {}
-        
-        if "genomeWalk" in self.fileDirectories:
-        
-            self.histograms["gwSizeHist"] = Histogram(self, "genomeWalk", "gwSizeHist",
-                lambda x: int(x.split(',')[-2]),
-                1000, (float(0),float(1000)))
-        
-            self.histograms["gwCSizeHist"] = Histogram(self,"genomeWalkControl", "gwCSizeHist",
-                          lambda x: int(x.split(',')[-2]),
-                          1000, (0,1000))
-        
-        
-            self.histograms2d["gwSizeHist2d"] = Histogram2d(self, "genomeWalk",
-                          "gwSizeHist2d",
-                          lambda x: list([float(a) for a in x.split(',')[-2:]]),
-                          (500,35),
-                          ((0, 500), (0.65, 1)))
-
-            self.histograms2d["gwCSizeHist2d"] = Histogram2d(self, "genomeWalkControl",
-                          "gwCSizeHist2d",
-                          lambda x: list([float(a) for a in x.split(',')[-2:]]),
-                          (500,35),
-                          ((0, 500), (0.65, 1)))
-        else:
-            logging.warning("No GenomeWalkFile for {}|{}".format(self.species, self.assembly))
-
-        #These next 3 lines are a fix for a bug
-        if "mSizeHist" in self.fileDirectories:
-            logger.info("fixing the mSizeHist bug for {}|{}".format(self.genome.species, self.genome.assembly))
-            self.fileDirectories["rmSizeHist"] = self.fileDirectories["mSizeHist"]
-            self.fileDirectories.pop("mSizeHist")
-
-        if "repeatMask" in self.fileDirectories:
-            self.histograms["rmSizeHist"] = Histogram(self, "repeatMask", "rmSizeHist",
-                                              lambda x: (lambda z: int(z[1]) - int(z[0]))([a for a in x.split() if a][5:7]),
-                                                                        1000, (0, 1000), 3)
-        else:
-            logger.warning("No repeatMask for {}|{}".format(self.species, self.assembly))
-
-        logger.debug("generated histograsm for ncbi object: name species histograms histograms2d [{},{},{},{}]".format(self.species, self.assembly, str(self.histograms), str(self.histograms2d)))
