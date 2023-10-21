@@ -6,6 +6,7 @@ The class has the functionality of retrieving NCBI genomic data, holding paths t
 
 #Standard Library Class and function imports
 import gzip
+import time
 from subprocess import Popen, PIPE
 from collections import Counter
 from os import chdir, getcwd, remove, listdir
@@ -16,7 +17,7 @@ from re import findall
 from random import choice
 from sys import exit
 from typing import List, Dict, Callable
-
+from shutil import rmtree
 #3rd party class function imports
 from Bio import SeqIO
 from numpy import histogram, histogram2d, arange
@@ -74,10 +75,9 @@ def updateResources(func : Callable) -> Callable:
 
     return wrapper
 
-def migrate(func : Callable) -> Callable:
-    """
-    Decorator for moving new files and folders generated to the shared nfs memmory
-    """
+def migrate(func : Callable, Compressed = True) -> Callable:
+
+    #Decorator for moving new files and folders generated to the shared nfs memmory
     #Function for looking up for a resource
     #decorator/wrapper magic
     def wrapper(slf, *args, **kwargs):
@@ -86,12 +86,13 @@ def migrate(func : Callable) -> Callable:
         print("--------------MIGRATING--------------")
         for k in slf.fileDirectories:
             originDir = slf.fileDirectories[k]
-            destDir = join(dConfig["cloud"][k], originDir.split('/')[-1])
+            if originDir.endswith(".gz"):
+                destDir = join(dConfig["cloud"][k], originDir.split('/')[-1])
 
-            if (not (isdir(destDir) or isfile(destDir))):
-                p = Popen(["gsutil", "cp", "-r", originDir, destDir])
-                p.wait()
-                logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
+                if (not (isdir(destDir) or isfile(destDir))):
+                    p = Popen(["gsutil", "cp", "-r", originDir, destDir])
+                    p.wait()
+                    logger.debug(f"migrating {originDir} ---> {destDir}\n{p.communicate()}\n")
 
     return wrapper
 
@@ -145,10 +146,19 @@ class ncbiData:
                 decompressedFile =  join(outFolder ,downloadFromURL(resourceLink, decompress = True))
                 self.fileDirectories[resourceName] = decompressedFile
                 logger.debug("Downloaded and Decompressed File : {} ; deltaT : {}".format(decompressedFile, time() -t0))
+                if not isfile(decompressedFile):
+                    if isdir(decompressedFile):
+                        raise Exception(f"{decompressedFile} is a folder not a file")
+                    raise Exception(f"{decompressedFile} does not exist")
             else:
                 logging.debug("Downloading {}".format(resourceLink))
-                self.fileDirectories[resourceName] = join(outFolder ,downloadFromURL(resourceLink))
+                newFile = join(outFolder ,downloadFromURL(resourceLink))
+                self.fileDirectories[newFile]
                 logging.debug("Downloaded  {}".format(resourceLink, time()))
+                if not isfile(newFile):
+                    if isdir(newFile):
+                        raise Exception(f"{newFile} is a folder not a file")
+                    raise Exception(f"{newFile} does not exist")
             #go back to old folder
             chdir(old)
         else:
@@ -158,7 +168,43 @@ class ncbiData:
     def deleteResource(self, resourceName):
         remove(self.fileDirectories[resourceName])
 
+    @updateResources
     @migrate
+    def upload(self):
+        return
+
+    @updateResources
+    def compressAndUpload(self,compressList):
+
+         pool = []
+         #uploadList = []
+         for name in compressList:
+             indir = self.fileDirectories[name]
+
+             if isdir(indir):
+                 outdir = indir + ".tar.gz"
+                 cprocess = Popen(["tar","-czvf", outdir, indir])
+                 #uploadList.append((name,outdir))
+                 #pool.append(cprocess)
+                 cprocess.wait()
+                 rmtree(indir)
+
+             elif isfile(indir):
+                 outdir = indir + ".gz"
+                 cprocess = Popen([f"bgzip -c {indir} > {outdir} "], shell = True)
+                 #uploadList.append((name,outdir))
+                 #pool.append(cprocess)
+                 cprocess.wait()
+                 remove(indir)
+             else:
+                 raise Exception(f" {name} type file or folder not found, dont forget to implement updateResources to map output to application")
+         #while any(list([a.poll() != 0 for a in pool])):
+             #time.sleep(2)
+
+             destDir = join(dConfig["cloud"][name], outdir.split('/')[-1])
+             p = Popen(["gsutil", "cp", "-r", outdir, destDir])
+             p.wait()
+    #@migrate
     @updateResources
     def genBlastReport(self, folderKey, outName):
 

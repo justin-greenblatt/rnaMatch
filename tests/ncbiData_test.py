@@ -1,5 +1,5 @@
 import sys, os, json
-sys.path.insert(1, os.path.join(os.environ.get("HOME"), "blastWeb/bin"))
+sys.path.insert(1, os.path.join(os.environ.get("HOME"), "rnaMatch/bin"))
 from ncbiData import ncbiData
 from settings.directories import NCBI_DUMMY_DATA
 import logging
@@ -7,7 +7,7 @@ import logging
 class TestNcbiData:
 
     
-    platypus = ncbiData("/home/a2iediting/blastWeb/tests/Anas_platyrhynchos-GCF_015476345.1_ZJU1.0.json")
+    platypus = ncbiData("/home/a2iediting/rnaMatch/tests/Anas_platyrhynchos-GCF_015476345.1_ZJU1.0.json")
 
     def test_ncbiData(self):
         assert TestNcbiData.platypus.id == TestNcbiData.assemblieName.replace('/','_')

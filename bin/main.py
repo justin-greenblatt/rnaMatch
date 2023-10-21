@@ -10,7 +10,7 @@ from flask import Flask, render_template, url_for
 from settings.logs import MAIN_LOG_PATH, MAIN_LOG_LEVEL
 from requests import packages
 
-sys.path.insert(1, join(environ.get("HOME"), "blastWeb/bin"))
+sys.path.insert(1, join(environ.get("HOME"), "rnaMatch/bin"))
 
 import ensemblData
 import myUtils

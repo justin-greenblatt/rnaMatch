@@ -2,7 +2,7 @@ from os import environ
 from os.path import join
 from time import time
 
-APLICATION_PATH = join(environ.get("HOME"), "blastWeb")
+APLICATION_PATH = join(environ.get("HOME"), "rnaMatch")
 DATA_PATH = join(environ.get("HOME"), "data")
 
 

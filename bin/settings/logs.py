@@ -17,7 +17,7 @@ MASTER_LOG_LEVEL = logging.DEBUG
 
 #GENERATING UNIQUE LOG_ID FROM TIMESTAMP
 t = datetime.now()
-LOG_ID = "blastWeb_{}D{}M{}Y_{}h{}m{}s".format(t.day, t.month, t.year, t.hour, t.minute, t.second)
+LOG_ID = "rnaMatch_{}D{}M{}Y_{}h{}m{}s".format(t.day, t.month, t.year, t.hour, t.minute, t.second)
 mkdir(join(LOG_FOLDER, LOG_ID))
 L = lambda x: join(LOG_FOLDER, LOG_ID, "{}_{}.txt".format(LOG_ID, x))
 TIME = lambda: strftime("%c")
